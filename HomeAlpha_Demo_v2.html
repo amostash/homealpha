@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HomeAlpha™ — Investment Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #060a14;
+  --bg2: #0c1222;
+  --bg3: #111a2e;
+  --border: #1a2540;
+  --border2: #243352;
+  --cyan: #22d3ee;
+  --cyan2: #06b6d4;
+  --green: #10b981;
+  --red: #ef4444;
+  --amber: #f59e0b;
+  --purple: #a855f7;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --text4: #475569;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+input[type="range"] { -webkit-appearance: none; background: var(--border); border-radius: 4px; height: 4px; width: 100%; cursor: pointer; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--cyan); cursor: pointer; border: 2px solid var(--bg); }
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ═══ COVER PAGE ═══ */
+#cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 30% 20%, rgba(34,211,238,0.06) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(168,85,247,0.04) 0%, transparent 50%),
+              var(--bg);
+}
+#cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 100px, rgba(34,211,238,0.015) 100px, rgba(34,211,238,0.015) 101px),
+    repeating-linear-gradient(90deg, transparent, transparent 100px, rgba(34,211,238,0.015) 100px, rgba(34,211,238,0.015) 101px);
+  pointer-events: none;
+}
+.cover-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+  animation: pulse 8s ease-in-out infinite alternate;
+}
+.cover-glow.g1 { background: var(--cyan); top: -200px; left: -100px; }
+.cover-glow.g2 { background: var(--purple); bottom: -200px; right: -100px; animation-delay: 4s; }
+@keyframes pulse { 0% { opacity: 0.1; transform: scale(1); } 100% { opacity: 0.2; transform: scale(1.15); } }
+
+.cover-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 900px;
+  padding: 40px;
+}
+.cover-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(34,211,238,0.08);
+  border: 1px solid rgba(34,211,238,0.2);
+  border-radius: 50px;
+  padding: 6px 18px;
+  font-size: 12px;
+  color: var(--cyan);
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  animation: fadeUp 0.8s ease both;
+}
+.cover-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  animation: fadeUp 0.8s ease 0.1s both;
+}
+.cover-logo-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--cyan), var(--cyan2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--bg);
+  box-shadow: 0 0 40px rgba(34,211,238,0.3);
+}
+.cover-title {
+  font-size: 72px;
+  font-weight: 900;
+  letter-spacing: -3px;
+  line-height: 1;
+}
+.cover-title span { color: var(--cyan); }
+.cover-sub {
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  animation: fadeUp 0.8s ease 0.2s both;
+}
+.cover-sub strong { color: var(--text); font-weight: 600; }
+.cover-divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  margin: 28px auto;
+  border-radius: 1px;
+  animation: fadeUp 0.8s ease 0.3s both;
+}
+.cover-stats {
+  display: flex;
+  gap: 48px;
+  justify-content: center;
+  margin: 32px 0 40px;
+  animation: fadeUp 0.8s ease 0.4s both;
+}
+.cover-stat-val { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 800; color: var(--cyan); }
+.cover-stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
+.cover-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 40px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--bg);
+  background: linear-gradient(135deg, var(--cyan), var(--cyan2));
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 24px rgba(34,211,238,0.25);
+  animation: fadeUp 0.8s ease 0.5s both;
+}
+.cover-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(34,211,238,0.35); }
+.cover-features {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 48px;
+  animation: fadeUp 0.8s ease 0.6s both;
+}
+.cover-feat {
+  background: rgba(12,18,34,0.8);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  width: 200px;
+  text-align: left;
+  transition: border-color 0.3s;
+}
+.cover-feat:hover { border-color: rgba(34,211,238,0.3); }
+.cover-feat-icon { font-size: 24px; margin-bottom: 10px; }
+.cover-feat-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.cover-feat-desc { font-size: 11px; color: var(--text3); line-height: 1.5; }
+.cover-footer {
+  position: absolute;
+  bottom: 24px;
+  font-size: 11px;
+  color: var(--text4);
+  animation: fadeUp 0.8s ease 0.7s both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══ APP ═══ */
+#app { display: none; min-height: 100vh; }
+#app.active { display: flex; flex-direction: column; }
+
+.header {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(6,10,20,0.95);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.logo { display: flex; align-items: center; gap: 8px; }
+.logo-icon {
+  width: 30px; height: 30px; border-radius: 7px;
+  background: linear-gradient(135deg, var(--cyan), var(--cyan2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 900; color: var(--bg);
+}
+.logo-text { font-size: 14px; font-weight: 800; }
+.logo-text span { color: var(--cyan); }
+.logo-sub { font-size: 8px; color: var(--text3); letter-spacing: 1px; }
+
+.btn-group {
+  display: flex; gap: 2px; background: var(--bg2); border-radius: 7px; padding: 2px; border: 1px solid var(--border);
+}
+.btn-group button {
+  background: transparent; border: 1px solid transparent; color: var(--text3);
+  padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 10px;
+  font-weight: 500; font-family: 'Outfit', sans-serif; transition: all 0.15s;
+}
+.btn-group button.active {
+  background: linear-gradient(135deg, rgba(34,211,238,0.15), rgba(34,211,238,0.05));
+  border-color: rgba(34,211,238,0.3); color: var(--cyan); font-weight: 700;
+}
+.btn-group button.active2 { background: var(--bg3); color: var(--text); font-weight: 700; }
+
+.market-bar {
+  padding: 6px 16px; background: rgba(12,18,34,0.8); border-bottom: 1px solid var(--border);
+  display: flex; gap: 20px; font-size: 10px; flex-wrap: wrap; align-items: center;
+}
+.market-bar .label { color: var(--text3); }
+.market-bar .val { font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+.layout { display: flex; flex: 1; overflow: hidden; }
+.sidebar {
+  width: 240px; flex-shrink: 0; border-right: 1px solid var(--border);
+  padding: 12px; overflow-y: auto; background: var(--bg); height: calc(100vh - 82px);
+}
+.sidebar-r {
+  width: 200px; flex-shrink: 0; border-left: 1px solid var(--border);
+  padding: 10px; overflow-y: auto; background: var(--bg); height: calc(100vh - 82px);
+}
+.main { flex: 1; overflow-y: auto; padding: 12px; height: calc(100vh - 82px); }
+.main-detail { flex: 1; overflow-y: auto; padding: 0; height: calc(100vh - 82px); }
+
+.section-label {
+  font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 2px;
+  margin: 10px 0 6px; font-weight: 700;
+}
+.search-input {
+  width: 100%; padding: 7px 10px; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 7px; color: var(--text); font-size: 11px; outline: none;
+  font-family: 'Outfit', sans-serif; margin-bottom: 10px;
+}
+.search-input:focus { border-color: rgba(34,211,238,0.3); }
+.filter-btn {
+  background: transparent; border: 1px solid var(--border); color: var(--text3);
+  padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 9px;
+  font-weight: 600; font-family: 'Outfit', sans-serif; transition: all 0.15s;
+}
+.filter-btn.active { background: var(--bg3); color: var(--cyan); }
+.select-ctrl {
+  width: 100%; padding: 5px 7px; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 5px; color: var(--text); font-size: 10px; outline: none;
+  font-family: 'Outfit', sans-serif; margin-bottom: 10px;
+}
+.stress-btn {
+  display: block; width: 100%; background: var(--bg2); border: 1px solid var(--border);
+  color: var(--text2); padding: 5px 8px; border-radius: 5px; cursor: pointer;
+  font-size: 10px; font-weight: 600; text-align: left; margin-bottom: 3px;
+  font-family: 'Outfit', sans-serif; transition: all 0.15s;
+}
+.stress-btn:hover { border-color: var(--border2); color: var(--text); }
+
+/* Slider */
+.slider-row { margin-bottom: 12px; }
+.slider-head { display: flex; justify-content: space-between; margin-bottom: 3px; }
+.slider-label { color: var(--text2); font-size: 11px; }
+.slider-val { color: var(--cyan); font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+/* Property Card */
+.card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px; cursor: pointer; position: relative; transition: all 0.2s; margin-bottom: 8px;
+}
+.card:hover { border-color: var(--border2); }
+.card.selected { background: linear-gradient(135deg, rgba(34,211,238,0.06), rgba(15,23,42,0.95)); border-color: rgba(34,211,238,0.4); }
+.card-rank {
+  position: absolute; top: -8px; left: -8px;
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800;
+}
+.card-rank.top { background: linear-gradient(135deg, var(--cyan), var(--cyan2)); color: var(--bg); }
+.card-rank.other { background: #334155; color: var(--text2); }
+.card-body { display: flex; justify-content: space-between; gap: 10px; }
+.card-info { flex: 1; min-width: 0; }
+.card-addr { font-size: 13px; font-weight: 700; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 2px; }
+.card-meta { font-size: 10px; color: var(--text3); margin-bottom: 8px; }
+.card-metrics { display: flex; gap: 14px; }
+.card-metric-label { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; }
+.card-metric-val { font-size: 14px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+.card-alpha {
+  text-align: center; border-radius: 10px; padding: 8px 10px; min-width: 64px;
+}
+.card-alpha-score { font-size: 22px; font-weight: 900; font-family: 'JetBrains Mono', monospace; line-height: 1; }
+.card-alpha-label { font-size: 8px; font-weight: 700; margin-top: 2px; }
+.card-actions { display: flex; gap: 4px; margin-top: 8px; }
+.card-tag {
+  font-size: 9px; padding: 2px 6px; background: var(--bg3); border-radius: 5px; color: var(--text3);
+}
+.comp-btn {
+  background: transparent; border: 1px solid #334155; color: var(--text3);
+  font-size: 10px; padding: 2px 8px; border-radius: 5px; cursor: pointer; font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+}
+.comp-btn.active { background: rgba(168,85,247,0.15); border-color: rgba(168,85,247,0.5); color: #c084fc; }
+
+/* Detail Panel */
+.detail-pad { padding: 18px; }
+.detail-title { font-size: 17px; font-weight: 800; color: var(--text); }
+.detail-sub { font-size: 11px; color: var(--text3); margin: 3px 0 16px; }
+.alpha-hero {
+  background: linear-gradient(135deg, rgba(34,211,238,0.04), rgba(168,85,247,0.04));
+  border: 1px solid var(--border); border-radius: 14px; padding: 18px;
+  display: flex; align-items: center; gap: 20px; margin-bottom: 18px;
+}
+.metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.metric-sm-label { font-size: 9px; color: var(--text3); }
+.metric-sm-val { font-size: 17px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+.stat-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 16px; }
+.stat-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px; text-align: center;
+}
+.stat-card-label { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; }
+.stat-card-val { font-size: 15px; font-weight: 800; color: var(--text); font-family: 'JetBrains Mono', monospace; margin: 3px 0 1px; }
+.stat-card-sub { font-size: 8px; color: var(--text4); }
+.chart-box {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px; margin-bottom: 14px;
+}
+.chart-title { font-size: 10px; color: var(--text2); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+.opp-cost {
+  background: linear-gradient(135deg, rgba(239,68,68,0.05), rgba(245,158,11,0.05));
+  border: 1px solid rgba(239,68,68,0.2); border-radius: 12px; padding: 14px;
+}
+.opp-cost-title { font-size: 10px; color: var(--amber); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.opp-cost-text { font-size: 11px; color: #cbd5e1; line-height: 1.7; }
+
+/* Risk bars */
+.risk-bar { margin-bottom: 5px; }
+.risk-bar-head { display: flex; justify-content: space-between; }
+.risk-bar-label { color: var(--text2); font-size: 10px; }
+.risk-bar-val { color: var(--text); font-size: 10px; font-weight: 700; }
+.risk-bar-track { height: 4px; background: var(--border); border-radius: 2px; margin-top: 2px; }
+.risk-bar-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+
+/* Compare */
+.comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.comp-table th { text-align: right; padding: 6px 4px; color: var(--text2); font-weight: 700; }
+.comp-table th:first-child { text-align: left; color: var(--text3); }
+.comp-table td { padding: 5px 4px; font-family: 'JetBrains Mono', monospace; }
+.comp-table td:first-child { font-family: 'Outfit', sans-serif; color: var(--text2); }
+.comp-table tr { border-bottom: 1px solid var(--bg); }
+.wealth-gap {
+  background: linear-gradient(135deg, rgba(239,68,68,0.06), rgba(245,158,11,0.06));
+  border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 14px;
+  margin-top: 14px; text-align: center;
+}
+
+/* Quick pick sidebar */
+.qp-item { padding: 6px 8px; border-radius: 6px; cursor: pointer; margin-bottom: 3px; border: 1px solid transparent; transition: all 0.15s; }
+.qp-item:hover { background: rgba(34,211,238,0.03); }
+.qp-item.active { background: rgba(34,211,238,0.06); border-color: rgba(34,211,238,0.2); }
+.qp-addr { font-size: 10px; font-weight: 700; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qp-row { display: flex; justify-content: space-between; margin-top: 1px; }
+.qp-price { font-size: 9px; color: var(--text3); }
+.qp-alpha { font-size: 9px; font-weight: 700; }
+
+.empty-state { text-align: center; padding: 40px; color: var(--text3); }
+.empty-icon { font-size: 36px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ COVER PAGE ═══════════════ -->
+<div id="cover">
+  <div class="cover-glow g1"></div>
+  <div class="cover-glow g2"></div>
+  <div class="cover-content">
+    <div class="cover-badge">◆ Prototype Demo · Putnam County NY</div>
+    <div class="cover-logo">
+      <div class="cover-logo-icon">α</div>
+      <div class="cover-title">HomeAlpha<span>™</span></div>
+    </div>
+    <div class="cover-sub">
+      The <strong>Personalized Investment Intelligence Layer</strong><br>
+      for Residential Real Estate
+    </div>
+    <div class="cover-divider"></div>
+    <p style="font-size:14px;color:var(--text3);max-width:560px;margin:0 auto 8px;line-height:1.7;">
+      Every home is an investment. HomeAlpha calculates the <strong style="color:var(--cyan)">true net return</strong> of every listing — personalized to your financial situation — and ranks them against the stock market.
+    </p>
+    <div class="cover-stats">
+      <div><div class="cover-stat-val">98</div><div class="cover-stat-label">Live Listings</div></div>
+      <div><div class="cover-stat-val">IRR</div><div class="cover-stat-label">True Net Return</div></div>
+      <div><div class="cover-stat-val">α</div><div class="cover-stat-label">vs S&P 500</div></div>
+    </div>
+    <button class="cover-btn" onclick="enterApp()">
+      Launch Intelligence Platform →
+    </button>
+    <div class="cover-features">
+      <div class="cover-feat">
+        <div class="cover-feat-icon">📊</div>
+        <div class="cover-feat-title">True IRR Engine</div>
+        <div class="cover-feat-desc">After-tax net return accounting for all costs, appreciation, and rental income</div>
+      </div>
+      <div class="cover-feat">
+        <div class="cover-feat-icon">⚡</div>
+        <div class="cover-feat-title">Opportunity Cost</div>
+        <div class="cover-feat-desc">Know exactly how much you leave on the table by choosing the wrong property</div>
+      </div>
+      <div class="cover-feat">
+        <div class="cover-feat-icon">🎛️</div>
+        <div class="cover-feat-title">Scenario Engine</div>
+        <div class="cover-feat-desc">Live stress tests: recession, rate shock, bull market — instant recalculation</div>
+      </div>
+      <div class="cover-feat">
+        <div class="cover-feat-icon">⚖️</div>
+        <div class="cover-feat-title">Compare & Rank</div>
+        <div class="cover-feat-desc">Side-by-side financial comparison of any properties in your shortlist</div>
+      </div>
+    </div>
+  </div>
+  <div class="cover-footer">HomeAlpha™ Demo · 98 Properties · Putnam County, NY · Built with real Zillow data</div>
+</div>
+
+<!-- ═══════════════ APP SHELL ═══════════════ -->
+<div id="app">
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">α</div>
+      <div>
+        <div class="logo-text">HomeAlpha<span>™</span></div>
+        <div class="logo-sub">INVESTMENT INTELLIGENCE</div>
+      </div>
+    </div>
+    <div class="btn-group" id="intentBtns"></div>
+    <div class="btn-group" id="viewBtns"></div>
+  </div>
+  <div class="market-bar" id="marketBar"></div>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main" id="mainPanel"></main>
+    <aside class="sidebar-r" id="sidebarR" style="display:none"></aside>
+  </div>
+</div>
+
+<script>
+// ═══════════════ DATA ═══════════════
+const L = [{"id":"31925748","zpid":"31925748","address":"7 Cimarron Road, Putnam Valley, NY 10579","street":"7 Cimarron Road","city":"Putnam Valley","state":"NY","zip":"10579","price":679000,"beds":3,"baths":3,"sqft":2100,"lat":41.365566,"lng":-73.86892,"lotSqft":53143,"rentZestimate":null,"taxAssessed":545900,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":1,"url":"https://www.zillow.com/homedetails/7-Cimarron-Rd-Putnam-Valley-NY-10579/31925748_zpid/","type":"SINGLE_FAMILY"},{"id":"31927857","zpid":"31927857","address":"35 Barger Street, Putnam Valley, NY 10579","street":"35 Barger Street","city":"Putnam Valley","state":"NY","zip":"10579","price":579900,"beds":3,"baths":2,"sqft":1844,"lat":41.343155,"lng":-73.8214,"lotSqft":106722,"rentZestimate":3515,"taxAssessed":460400,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":8,"url":"https://www.zillow.com/homedetails/35-Barger-St-Putnam-Valley-NY-10579/31927857_zpid/","type":"SINGLE_FAMILY"},{"id":"31926247","zpid":"31926247","address":"231 Church Road, Putnam Valley, NY 10579","street":"231 Church Road","city":"Putnam Valley","state":"NY","zip":"10579","price":500000,"beds":3,"baths":3,"sqft":1511,"lat":41.361477,"lng":-73.848885,"lotSqft":45302,"rentZestimate":null,"taxAssessed":491200,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":8,"url":"https://www.zillow.com/homedetails/231-Church-Rd-Putnam-Valley-NY-10579/31926247_zpid/","type":"SINGLE_FAMILY"},{"id":"31924235","zpid":"31924235","address":"342 Lake Shore Road, Putnam Valley, NY 10579","street":"342 Lake Shore Road","city":"Putnam Valley","state":"NY","zip":"10579","price":1195000,"beds":2,"baths":3,"sqft":2132,"lat":41.447,"lng":-73.8061,"lotSqft":20909,"rentZestimate":null,"taxAssessed":717900,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":2,"url":"https://www.zillow.com/homedetails/342-Lake-Shore-Rd-Putnam-Valley-NY-10579/31924235_zpid/","type":"SINGLE_FAMILY"},{"id":"31926700","zpid":"31926700","address":"40 Orchard Road, Putnam Valley, NY 10579","street":"40 Orchard Road","city":"Putnam Valley","state":"NY","zip":"10579","price":409900,"beds":2,"baths":2,"sqft":768,"lat":41.348732,"lng":-73.86931,"lotSqft":6000,"rentZestimate":null,"taxAssessed":321700,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":7,"url":"https://www.zillow.com/homedetails/40-Orchard-Rd-Putnam-Valley-NY-10579/31926700_zpid/","type":"SINGLE_FAMILY"},{"id":"31926026","zpid":"31926026","address":"1 Cherry Lane, Putnam Valley, NY 10579","street":"1 Cherry Lane","city":"Putnam Valley","state":"NY","zip":"10579","price":725000,"beds":3,"baths":3,"sqft":2501,"lat":41.37408,"lng":-73.86008,"lotSqft":17028,"rentZestimate":null,"taxAssessed":421700,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":55,"url":"https://www.zillow.com/homedetails/1-Cherry-Ln-Putnam-Valley-NY-10579/31926026_zpid/","type":"SINGLE_FAMILY"},{"id":"31925845","zpid":"31925845","address":"297 Church Road, Putnam Valley, NY 10579","street":"297 Church Road","city":"Putnam Valley","state":"NY","zip":"10579","price":899900,"beds":4,"baths":4,"sqft":3336,"lat":41.36655,"lng":-73.854645,"lotSqft":54885,"rentZestimate":null,"taxAssessed":632100,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":87,"url":"https://www.zillow.com/homedetails/297-Church-Rd-Putnam-Valley-NY-10579/31925845_zpid/","type":"SINGLE_FAMILY"},{"id":"31904491","zpid":"31904491","address":"934 Peekskill Hollow Road, Carmel, NY 10579","street":"934 Peekskill Hollow Road","city":"Putnam Valley","state":"NY","zip":"10579","price":679000,"beds":4,"baths":3,"sqft":2305,"lat":41.418747,"lng":-73.77593,"lotSqft":213444,"rentZestimate":null,"taxAssessed":523500,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":91,"url":"https://www.zillow.com/homedetails/934-Peekskill-Hollow-Rd-Putnam-Valley-NY-10579/31904491_zpid/","type":"SINGLE_FAMILY"},{"id":"31925242","zpid":"31925242","address":"37 Saw Mill Road, Putnam Valley, NY 10579","street":"37 Saw Mill Road","city":"Putnam Valley","state":"NY","zip":"10579","price":492575,"beds":2,"baths":1,"sqft":970,"lat":41.38909,"lng":-73.84188,"lotSqft":19890,"rentZestimate":null,"taxAssessed":293000,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":11,"url":"https://www.zillow.com/homedetails/37-Saw-Mill-Rd-Putnam-Valley-NY-10579/31925242_zpid/","type":"SINGLE_FAMILY"},{"id":"31924850","zpid":"31924850","address":"1 Rock Meadows, Putnam Valley, NY 10579","street":"1 Rock Meadows","city":"Putnam Valley","state":"NY","zip":"10579","price":999999,"beds":4,"baths":3,"sqft":3434,"lat":41.384605,"lng":-73.873276,"lotSqft":93654,"rentZestimate":null,"taxAssessed":866700,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":83,"url":"https://www.zillow.com/homedetails/1-Rock-Mdws-Putnam-Valley-NY-10579/31924850_zpid/","type":"SINGLE_FAMILY"},{"id":"31924420","zpid":"31924420","address":"60 Arbutus Street, Putnam Valley, NY 10579","street":"60 Arbutus Street","city":"Putnam Valley","state":"NY","zip":"10579","price":675000,"beds":3,"baths":2,"sqft":1344,"lat":41.438824,"lng":-73.80196,"lotSqft":143748,"rentZestimate":null,"taxAssessed":399900,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":30,"url":"https://www.zillow.com/homedetails/60-Arbutus-St-Putnam-Valley-NY-10579/31924420_zpid/","type":"SINGLE_FAMILY"},{"id":"31927475","zpid":"31927475","address":"9 Jim Lane, Putnam Valley, NY 10579","street":"9 Jim Lane","city":"Putnam Valley","state":"NY","zip":"10579","price":545000,"beds":3,"baths":3,"sqft":3444,"lat":41.337833,"lng":-73.85099,"lotSqft":158558,"rentZestimate":null,"taxAssessed":748700,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":420,"url":"https://www.zillow.com/homedetails/9-Jim-Ln-Putnam-Valley-NY-10579/31927475_zpid/","type":"SINGLE_FAMILY"},{"id":"83948242","zpid":"83948242","address":"22 Living Springs Lane, Putnam Valley, NY 10579","street":"22 Living Springs Lane","city":"Putnam Valley","state":"NY","zip":"10579","price":7000000,"beds":20,"baths":40,"sqft":60000,"lat":41.378204,"lng":-73.8022,"lotSqft":6534000,"rentZestimate":null,"taxAssessed":1009700,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":219,"url":"https://www.zillow.com/homedetails/22-Living-Springs-Ln-Putnam-Valley-NY-10579/83948242_zpid/","type":"SINGLE_FAMILY"},{"id":"31925841","zpid":"31925841","address":"17 Birch Hill Road, Putnam Valley, NY 10579","street":"17 Birch Hill Road","city":"Putnam Valley","state":"NY","zip":"10579","price":875000,"beds":4,"baths":3,"sqft":2884,"lat":41.364773,"lng":-73.85424,"lotSqft":54885,"rentZestimate":null,"taxAssessed":600000,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":36,"url":"https://www.zillow.com/homedetails/17-Birch-Hill-Rd-Putnam-Valley-NY-10579/31925841_zpid/","type":"SINGLE_FAMILY"},{"id":"83952044","zpid":"83952044","address":"149 N Shore Road, Putnam Valley, NY 10579","street":"149 N Shore Road","city":"Putnam Valley","state":"NY","zip":"10579","price":999900,"beds":3,"baths":2,"sqft":1494,"lat":41.40836,"lng":-73.84277,"lotSqft":55756,"rentZestimate":null,"taxAssessed":560600,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":70,"url":"https://www.zillow.com/homedetails/149-N-Shore-Rd-Putnam-Valley-NY-10579/83952044_zpid/","type":"SINGLE_FAMILY"},{"id":"31925080","zpid":"31925080","address":"25 Evergreen Road, Putnam Valley, NY 10579","street":"25 Evergreen Road","city":"Putnam Valley","state":"NY","zip":"10579","price":510000,"beds":2,"baths":2,"sqft":1262,"lat":41.392902,"lng":-73.84391,"lotSqft":15640,"rentZestimate":null,"taxAssessed":403700,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":63,"url":"https://www.zillow.com/homedetails/25-Evergreen-Rd-Putnam-Valley-NY-10579/31925080_zpid/","type":"SINGLE_FAMILY"},{"id":"31904068","zpid":"31904068","address":"10 Collier Drive E, Carmel, NY 10512","street":"10 Collier Drive E","city":"Carmel","state":"NY","zip":"10512","price":400000,"beds":3,"baths":2,"sqft":1760,"lat":41.429867,"lng":-73.6833,"lotSqft":16300,"rentZestimate":null,"taxAssessed":379400,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":3,"url":"https://www.zillow.com/homedetails/10-Collier-Dr-E-Carmel-NY-10512/31904068_zpid/","type":"SINGLE_FAMILY"},{"id":"31908670","zpid":"31908670","address":"204 Brook Road, Mahopac, NY 10541","street":"204 Brook Road","city":"Mahopac","state":"NY","zip":"10541","price":260000,"beds":2,"baths":2,"sqft":640,"lat":41.376488,"lng":-73.790665,"lotSqft":14352,"rentZestimate":null,"taxAssessed":286700,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":1,"url":"https://www.zillow.com/homedetails/204-Brook-Rd-Mahopac-NY-10541/31908670_zpid/","type":"SINGLE_FAMILY"},{"id":"31923451","zpid":"31923451","address":"1070 Route 9D, Garrison, NY 10524","street":"1070 Route 9D","city":"Garrison","state":"NY","zip":"10524","price":4995000,"beds":8,"baths":7,"sqft":10626,"lat":41.37866,"lng":-73.93725,"lotSqft":859003,"rentZestimate":null,"taxAssessed":4753406,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":151,"url":"https://www.zillow.com/homedetails/1070-Route-9d-Garrison-NY-10524/31923451_zpid/","type":"SINGLE_FAMILY"},{"id":"31908434","zpid":"31908434","address":"11 Dreps Dr, Mahopac, NY 10541","street":"11 Dreps Dr","city":"Mahopac","state":"NY","zip":"10541","price":799000,"beds":5,"baths":3,"sqft":2550,"lat":41.36394,"lng":-73.78459,"lotSqft":62290,"rentZestimate":null,"taxAssessed":630800,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":2,"url":"https://www.zillow.com/homedetails/11-Dreps-Dr-Mahopac-NY-10541/31908434_zpid/","type":"SINGLE_FAMILY"},{"id":"31926567","zpid":"31926567","address":"146 Wood Street, Carmel, NY 10541","street":"146 Wood Street","city":"Mahopac","state":"NY","zip":"10541","price":785000,"beds":5,"baths":3,"sqft":3636,"lat":41.360962,"lng":-73.79791,"lotSqft":121967,"rentZestimate":null,"taxAssessed":648300,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":0,"url":"https://www.zillow.com/homedetails/146-Wood-St-Mahopac-NY-10541/31926567_zpid/","type":"SINGLE_FAMILY"},{"id":"450633906","zpid":"450633906","address":"343 Heritage Hills #B, Somers, NY 10589","street":"343 Heritage Hills #B","city":"Somers","state":"NY","zip":"10589","price":525000,"beds":2,"baths":2,"sqft":1484,"lat":41.33414,"lng":-73.7021,"lotSqft":37897,"rentZestimate":null,"taxAssessed":null,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":0,"url":"https://www.zillow.com/homedetails/343-Heritage-Hls-B-Somers-NY-10589/450633906_zpid/","type":"CONDO"},{"id":"33101877","zpid":"33101877","address":"40 Heritage Hills #A, Somers, NY 10589","street":"40 Heritage Hills #A","city":"Somers","state":"NY","zip":"10589","price":633000,"beds":2,"baths":2,"sqft":1139,"lat":41.33409,"lng":-73.68911,"lotSqft":31363,"rentZestimate":null,"taxAssessed":33550,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":1,"url":"https://www.zillow.com/homedetails/40-Heritage-Hls-A-Somers-NY-10589/33101877_zpid/","type":"CONDO"},{"id":"31923008","zpid":"31923008","address":"1710 Route 9D, Cold Spring, NY 10516","street":"1710 Route 9D","city":"Cold Spring","state":"NY","zip":"10516","price":679000,"beds":3,"baths":2,"sqft":1680,"lat":41.41918,"lng":-73.94465,"lotSqft":23958,"rentZestimate":null,"taxAssessed":529028,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":13,"url":"https://www.zillow.com/homedetails/1710-Route-9d-Cold-Spring-NY-10516/31923008_zpid/","type":"SINGLE_FAMILY"},{"id":"31912744","zpid":"31912744","address":"23 Grandview Drive, Mahopac, NY 10541","street":"23 Grandview Drive","city":"Mahopac","state":"NY","zip":"10541","price":450000,"beds":3,"baths":2,"sqft":1300,"lat":41.34862,"lng":-73.76559,"lotSqft":10428,"rentZestimate":null,"taxAssessed":401300,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":126,"url":"https://www.zillow.com/homedetails/23-Grandview-Dr-Mahopac-NY-10541/31912744_zpid/","type":"SINGLE_FAMILY"},{"id":"31910029","zpid":"31910029","address":"8 Crecco Place, Mahopac, NY 10541","street":"8 Crecco Place","city":"Mahopac","state":"NY","zip":"10541","price":1150000,"beds":7,"baths":5,"sqft":4951,"lat":41.358017,"lng":-73.738106,"lotSqft":30927,"rentZestimate":null,"taxAssessed":902400,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":162,"url":"https://www.zillow.com/homedetails/8-Crecco-Pl-Mahopac-NY-10541/31910029_zpid/","type":"SINGLE_FAMILY"},{"id":"31907021","zpid":"31907021","address":"34 Nicole Way, Mahopac, NY 10541","street":"34 Nicole Way","city":"Mahopac","state":"NY","zip":"10541","price":779000,"beds":4,"baths":3,"sqft":3262,"lat":41.396633,"lng":-73.71562,"lotSqft":60548,"rentZestimate":null,"taxAssessed":661400,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":8,"url":"https://www.zillow.com/homedetails/34-Nicole-Way-Mahopac-NY-10541/31907021_zpid/","type":"SINGLE_FAMILY"},{"id":"31822286","zpid":"31822286","address":"15 Walker Road, Highland Falls, NY 10928","street":"15 Walker Road","city":"Highland Falls","state":"NY","zip":"10928","price":449999,"beds":2,"baths":2,"sqft":1245,"lat":41.35745,"lng":-73.97088,"lotSqft":15245,"rentZestimate":null,"taxAssessed":345000,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":2,"url":"https://www.zillow.com/homedetails/15-Walker-Rd-Highland-Falls-NY-10928/31822286_zpid/","type":"SINGLE_FAMILY"},{"id":"61949567","zpid":"61949567","address":"448 Sprout Brook Road, Garrison, NY 10524","street":"448 Sprout Brook Road","city":"Garrison","state":"NY","zip":"10524","price":599900,"beds":4,"baths":3,"sqft":2628,"lat":41.345318,"lng":-73.89889,"lotSqft":22930,"rentZestimate":null,"taxAssessed":546505,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":6,"url":"https://www.zillow.com/homedetails/448-Sprout-Brook-Rd-Garrison-NY-10524/61949567_zpid/","type":"SINGLE_FAMILY"},{"id":"31904704","zpid":"31904704","address":"19 Curry Road, Mahopac, NY 10541","street":"19 Curry Road","city":"Mahopac","state":"NY","zip":"10541","price":465000,"beds":2,"baths":2,"sqft":1057,"lat":41.412125,"lng":-73.73864,"lotSqft":10454,"rentZestimate":null,"taxAssessed":394700,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":11,"url":"https://www.zillow.com/homedetails/19-Curry-Rd-Mahopac-NY-10541/31904704_zpid/","type":"SINGLE_FAMILY"},{"id":"31917510","zpid":"31917510","address":"9 Barrett Circle Court, Carmel, NY 10512","street":"9 Barrett Circle Court","city":"Carmel","state":"NY","zip":"10512","price":739000,"beds":3,"baths":2,"sqft":1600,"lat":41.437675,"lng":-73.739075,"lotSqft":43560,"rentZestimate":null,"taxAssessed":863372,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":109,"url":"https://www.zillow.com/homedetails/9-Barrett-Circle-Ct-Carmel-NY-10512/31917510_zpid/","type":"SINGLE_FAMILY"},{"id":"2069213955","zpid":"2069213955","address":"16 Pine St, Lake Peekskill, NY 10537","street":"16 Pine St","city":"Lake Peekskill","state":"NY","zip":"10537","price":355000,"beds":2,"baths":1,"sqft":883,"lat":41.332893,"lng":-73.88537,"lotSqft":6000,"rentZestimate":2930,"taxAssessed":null,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":41,"url":"https://www.zillow.com/homedetails/16-Pine-St-Lake-Peekskill-NY-10537/2069213955_zpid/","type":"SINGLE_FAMILY"},{"id":"31926896","zpid":"31926896","address":"157 Tanglewylde Road, Lake Peekskill, NY 10537","street":"157 Tanglewylde Road","city":"Lake Peekskill","state":"NY","zip":"10537","price":199000,"beds":2,"baths":2,"sqft":1060,"lat":41.34566,"lng":-73.88243,"lotSqft":6970,"rentZestimate":3042,"taxAssessed":82800,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":186,"url":"https://www.zillow.com/homedetails/157-Tanglewylde-Rd-Lake-Peekskill-NY-10537/31926896_zpid/","type":"SINGLE_FAMILY"},{"id":"66527186","zpid":"66527186","address":"3868 Indian Hill Road, Shrub Oak, NY 10588","street":"3868 Indian Hill Road","city":"Shrub Oak","state":"NY","zip":"10588","price":699000,"beds":4,"baths":3,"sqft":1554,"lat":41.337246,"lng":-73.80734,"lotSqft":63162,"rentZestimate":null,"taxAssessed":7650,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":11,"url":"https://www.zillow.com/homedetails/3868-Indian-Hill-Rd-Shrub-Oak-NY-10588/66527186_zpid/","type":"SINGLE_FAMILY"},{"id":"31907149","zpid":"31907149","address":"55 Albion Oval, Mahopac, NY 10541","street":"55 Albion Oval","city":"Mahopac","state":"NY","zip":"10541","price":649000,"beds":3,"baths":3,"sqft":2150,"lat":41.39293,"lng":-73.715004,"lotSqft":44431,"rentZestimate":null,"taxAssessed":535000,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":35,"url":"https://www.zillow.com/homedetails/55-Albion-Oval-Mahopac-NY-10541/31907149_zpid/","type":"SINGLE_FAMILY"},{"id":"33101176","zpid":"33101176","address":"339 Heritage Hills #A, Somers, NY 10589","street":"339 Heritage Hills #A","city":"Somers","state":"NY","zip":"10589","price":500000,"beds":2,"baths":3,"sqft":1550,"lat":41.334198,"lng":-73.70238,"lotSqft":42253,"rentZestimate":null,"taxAssessed":52150,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":14,"url":"https://www.zillow.com/homedetails/339-Heritage-Hls-UNIT-A-Somers-NY-10589/33101176_zpid/","type":"CONDO"},{"id":"31907583","zpid":"31907583","address":"10 Richard Road, Mahopac, NY 10541","street":"10 Richard Road","city":"Mahopac","state":"NY","zip":"10541","price":585000,"beds":3,"baths":2,"sqft":1660,"lat":41.3847,"lng":-73.703354,"lotSqft":20468,"rentZestimate":null,"taxAssessed":472600,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":32,"url":"https://www.zillow.com/homedetails/10-Richard-Rd-Mahopac-NY-10541/31907583_zpid/","type":"SINGLE_FAMILY"},{"id":"33100477","zpid":"33100477","address":"26 Old Mill Road, Yorktown Heights, NY 10598","street":"26 Old Mill Road","city":"Yorktown Heights","state":"NY","zip":"10598","price":399000,"beds":2,"baths":1,"sqft":757,"lat":41.332424,"lng":-73.7369,"lotSqft":5049,"rentZestimate":null,"taxAssessed":26000,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":30,"url":"https://www.zillow.com/homedetails/26-Old-Mill-Rd-Yorktown-Heights-NY-10598/33100477_zpid/","type":"SINGLE_FAMILY"},{"id":"31906301","zpid":"31906301","address":"550 Beach Road, Mahopac, NY 10541","street":"550 Beach Road","city":"Mahopac","state":"NY","zip":"10541","price":565000,"beds":2,"baths":2,"sqft":1295,"lat":41.395065,"lng":-73.74458,"lotSqft":16500,"rentZestimate":null,"taxAssessed":460700,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":76,"url":"https://www.zillow.com/homedetails/550-Beach-Rd-Mahopac-NY-10541/31906301_zpid/","type":"SINGLE_FAMILY"},{"id":"31906251","zpid":"31906251","address":"201 Woodsbrooke Drive, Mahopac, NY 10541","street":"201 Woodsbrooke Drive","city":"Mahopac","state":"NY","zip":"10541","price":585000,"beds":3,"baths":3,"sqft":2836,"lat":41.39547,"lng":-73.770164,"lotSqft":436,"rentZestimate":null,"taxAssessed":233500,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":37,"url":"https://www.zillow.com/homedetails/201-Woodsbrook-Dr-Mahopac-NY-10541/31906251_zpid/","type":"SINGLE_FAMILY"},{"id":"31910503","zpid":"31910503","address":"13 Olympus Drive, Mahopac, NY 10541","street":"13 Olympus Drive","city":"Mahopac","state":"NY","zip":"10541","price":555000,"beds":3,"baths":3,"sqft":2100,"lat":41.369217,"lng":-73.73314,"lotSqft":16600,"rentZestimate":null,"taxAssessed":406100,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":106,"url":"https://www.zillow.com/homedetails/13-Olympus-Dr-Mahopac-NY-10541/31910503_zpid/","type":"SINGLE_FAMILY"},{"id":"31926812","zpid":"31926812","address":"123 Pleasant Road, Lake Peekskill, NY 10537","street":"123 Pleasant Road","city":"Lake Peekskill","state":"NY","zip":"10537","price":699900,"beds":3,"baths":4,"sqft":2812,"lat":41.346508,"lng":-73.88596,"lotSqft":43560,"rentZestimate":null,"taxAssessed":523800,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":219,"url":"https://www.zillow.com/homedetails/123-Pleasant-Rd-Lake-Peekskill-NY-10537/31926812_zpid/","type":"SINGLE_FAMILY"},{"id":"31905335","zpid":"31905335","address":"41 Harkin Road, Carmel, NY 10512","street":"41 Harkin Road","city":"Carmel","state":"NY","zip":"10512","price":599000,"beds":4,"baths":2,"sqft":2412,"lat":41.407246,"lng":-73.71453,"lotSqft":38768,"rentZestimate":null,"taxAssessed":641700,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":105,"url":"https://www.zillow.com/homedetails/41-Harkin-Rd-Carmel-NY-10512/31905335_zpid/","type":"SINGLE_FAMILY"},{"id":"31910771","zpid":"31910771","address":"204 Dahlia Drive, Mahopac, NY 10541","street":"204 Dahlia Drive","city":"Mahopac","state":"NY","zip":"10541","price":725000,"beds":4,"baths":3,"sqft":1800,"lat":41.366596,"lng":-73.734436,"lotSqft":21780,"rentZestimate":null,"taxAssessed":408300,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":65,"url":"https://www.zillow.com/homedetails/204-Dahlia-Dr-Mahopac-NY-10541/31910771_zpid/","type":"SINGLE_FAMILY"},{"id":"31903709","zpid":"31903709","address":"168 Gleneida Ridge Road, Carmel, NY 10512","street":"168 Gleneida Ridge Road","city":"Carmel","state":"NY","zip":"10512","price":480000,"beds":2,"baths":1,"sqft":1382,"lat":41.425686,"lng":-73.69163,"lotSqft":20473,"rentZestimate":null,"taxAssessed":319000,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":160,"url":"https://www.zillow.com/homedetails/168-Gleneida-Ridge-Rd-Carmel-NY-10512/31903709_zpid/","type":"SINGLE_FAMILY"},{"id":"31910631","zpid":"31910631","address":"53 Tanager Road, Mahopac, NY 10541","street":"53 Tanager Road","city":"Mahopac","state":"NY","zip":"10541","price":775000,"beds":3,"baths":3,"sqft":2502,"lat":41.37232,"lng":-73.7197,"lotSqft":21400,"rentZestimate":null,"taxAssessed":710500,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":57,"url":"https://www.zillow.com/homedetails/53-Tanager-Rd-Mahopac-NY-10541/31910631_zpid/","type":"SINGLE_FAMILY"},{"id":"31909712","zpid":"31909712","address":"18 Parker Drive, Mahopac, NY 10541","street":"18 Parker Drive","city":"Mahopac","state":"NY","zip":"10541","price":725000,"beds":4,"baths":3,"sqft":3493,"lat":41.362267,"lng":-73.77551,"lotSqft":16988,"rentZestimate":null,"taxAssessed":568100,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":27,"url":"https://www.zillow.com/homedetails/18-Parker-Dr-Mahopac-NY-10541/31909712_zpid/","type":"SINGLE_FAMILY"},{"id":"33098695","zpid":"33098695","address":"54 Driftwood, Somers, NY 10589","street":"54 Driftwood","city":"Somers","state":"NY","zip":"10589","price":799000,"beds":3,"baths":4,"sqft":3270,"lat":41.34937,"lng":-73.68215,"lotSqft":5663,"rentZestimate":5523,"taxAssessed":63100,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":15,"url":"https://www.zillow.com/homedetails/54-Driftwood-Somers-NY-10589/33098695_zpid/","type":"SINGLE_FAMILY"},{"id":"31904562","zpid":"31904562","address":"1 Shady Lane, Mahopac, NY 10541","street":"1 Shady Lane","city":"Mahopac","state":"NY","zip":"10541","price":425000,"beds":3,"baths":1,"sqft":1353,"lat":41.415874,"lng":-73.76046,"lotSqft":435,"rentZestimate":null,"taxAssessed":281100,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":203,"url":"https://www.zillow.com/homedetails/1-Shady-Ln-Mahopac-NY-10541/31904562_zpid/","type":"SINGLE_FAMILY"},{"id":"31923698","zpid":"31923698","address":"39 Upland Drive, Garrison, NY 10524","street":"39 Upland Drive","city":"Garrison","state":"NY","zip":"10524","price":355000,"beds":2,"baths":1,"sqft":1160,"lat":41.33745,"lng":-73.91359,"lotSqft":45738,"rentZestimate":null,"taxAssessed":388626,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":101,"url":"https://www.zillow.com/homedetails/39-Upland-Dr-Garrison-NY-10524/31923698_zpid/","type":"SINGLE_FAMILY"},{"id":"33098037","zpid":"33098037","address":"22 Franklin Drive, Mahopac, NY 10541","street":"22 Franklin Drive","city":"Mahopac","state":"NY","zip":"10541","price":939000,"beds":4,"baths":3,"sqft":2310,"lat":41.345684,"lng":-73.714745,"lotSqft":41382,"rentZestimate":null,"taxAssessed":81700,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":91,"url":"https://www.zillow.com/homedetails/22-Franklin-Dr-Mahopac-NY-10541/33098037_zpid/","type":"SINGLE_FAMILY"},{"id":"31921976","zpid":"31921976","address":"6 Fishkill Road, Cold Spring, NY 10516","street":"","city":"Cold Spring","state":"NY","zip":"10516","price":439000,"beds":2,"baths":1,"sqft":1400,"lat":41.42845,"lng":-73.93989,"lotSqft":1681,"rentZestimate":null,"taxAssessed":340640,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":106,"url":"https://www.zillow.com/homedetails/6-Fishkill-Rd-Cold-Spring-NY-10516/31921976_zpid/","type":"SINGLE_FAMILY"},{"id":"31908140","zpid":"31908140","address":"63 Farview Road, Carmel, NY 10512","street":"","city":"Carmel","state":"NY","zip":"10512","price":710000,"beds":4,"baths":3,"sqft":2400,"lat":41.382877,"lng":-73.68169,"lotSqft":77536,"rentZestimate":null,"taxAssessed":592400,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":70,"url":"https://www.zillow.com/homedetails/63-Farview-Rd-Carmel-NY-10512/31908140_zpid/","type":"SINGLE_FAMILY"},{"id":"31923516","zpid":"31923516","address":"298 Old Albany Post Road, Garrison, NY 10524","street":"","city":"Garrison","state":"NY","zip":"10524","price":525000,"beds":3,"baths":2,"sqft":1900,"lat":41.36249,"lng":-73.90123,"lotSqft":26988,"rentZestimate":null,"taxAssessed":321979,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":64,"url":"https://www.zillow.com/homedetails/298-Old-Albany-Post-Rd-Garrison-NY-10524/31923516_zpid/","type":"SINGLE_FAMILY"},{"id":"31906552","zpid":"31906552","address":"2 Redding Lane, Mahopac, NY 10541","street":"","city":"Mahopac","state":"NY","zip":"10541","price":719000,"beds":4,"baths":3,"sqft":2400,"lat":41.386936,"lng":-73.76966,"lotSqft":47480,"rentZestimate":5892,"taxAssessed":599200,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":112,"url":"https://www.zillow.com/homedetails/2-Redding-Ln-Mahopac-NY-10541/31906552_zpid/","type":"SINGLE_FAMILY"},{"id":"31921490","zpid":"31921490","address":"24 Mountain Avenue, Cold Spring, NY 10516","street":"","city":"Cold Spring","state":"NY","zip":"10516","price":1250000,"beds":5,"baths":2,"sqft":2900,"lat":41.4225,"lng":-73.95415,"lotSqft":9147,"rentZestimate":null,"taxAssessed":632998,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":286,"url":"https://www.zillow.com/homedetails/24-Mountain-Ave-Cold-Spring-NY-10516/31921490_zpid/","type":"SINGLE_FAMILY"},{"id":"31915966","zpid":"31915966","address":"40 Will Way, Carmel, NY 10512","street":"","city":"Carmel","state":"NY","zip":"10512","price":708888,"beds":3,"baths":2,"sqft":1900,"lat":41.445225,"lng":-73.68359,"lotSqft":29621,"rentZestimate":null,"taxAssessed":393605,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":8,"url":"https://www.zillow.com/homedetails/40-Will-Way-Carmel-NY-10512/31915966_zpid/","type":"SINGLE_FAMILY"},{"id":"31912585","zpid":"31912585","address":"20 Lake Road, Mahopac, NY 10541","street":"","city":"Mahopac","state":"NY","zip":"10541","price":749999,"beds":3,"baths":3,"sqft":1900,"lat":41.350384,"lng":-73.77856,"lotSqft":42689,"rentZestimate":null,"taxAssessed":528300,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":37,"url":"https://www.zillow.com/homedetails/20-Lake-Rd-Mahopac-NY-10541/31912585_zpid/","type":"SINGLE_FAMILY"},{"id":"31915930","zpid":"31915930","address":"55 Robin Drive, Carmel, NY 10512","street":"","city":"Kent Lakes","state":"NY","zip":"10512","price":599900,"beds":3,"baths":2,"sqft":1900,"lat":41.444466,"lng":-73.686775,"lotSqft":23087,"rentZestimate":3789,"taxAssessed":452035,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":79,"url":"https://www.zillow.com/homedetails/55-Robin-Dr-Kent-Lakes-NY-10512/31915930_zpid/","type":"SINGLE_FAMILY"},{"id":"31923094","zpid":"31923094","address":"34 Hudson Ridge, Garrison, NY 10524","street":"","city":"Garrison","state":"NY","zip":"10524","price":2195000,"beds":4,"baths":4,"sqft":2400,"lat":41.395443,"lng":-73.92681,"lotSqft":214315,"rentZestimate":null,"taxAssessed":1143661,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":146,"url":"https://www.zillow.com/homedetails/34-Hudson-Rdg-Garrison-NY-10524/31923094_zpid/","type":"SINGLE_FAMILY"},{"id":"299412663","zpid":"299412663","address":"42 Dicks Castle Road, Garrison, NY 10524","street":"","city":"Garrison","state":"NY","zip":"10524","price":1625000,"beds":3,"baths":3,"sqft":1900,"lat":41.401848,"lng":-73.9289,"lotSqft":173804,"rentZestimate":null,"taxAssessed":865818,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":58,"url":"https://www.zillow.com/homedetails/42-Dicks-Castle-Rd-Garrison-NY-10524/299412663_zpid/","type":"CONDO"},{"id":"33098915","zpid":"33098915","address":"69 Mitchell Road, Somers, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":599000,"beds":4,"baths":3,"sqft":2400,"lat":41.345684,"lng":-73.68889,"lotSqft":10019,"rentZestimate":null,"taxAssessed":64400,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":218,"url":"https://www.zillow.com/homedetails/69-Mitchell-Rd-Somers-NY-10589/33098915_zpid/","type":"SINGLE_FAMILY"},{"id":"31906664","zpid":"31906664","address":"300 West Lake Blvd, Mahopac, NY 10541","street":"","city":"Mahopac","state":"NY","zip":"10541","price":2495000,"beds":4,"baths":5,"sqft":2400,"lat":41.38789,"lng":-73.74478,"lotSqft":51400,"rentZestimate":null,"taxAssessed":1369100,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":62,"url":"https://www.zillow.com/homedetails/300-W-Lake-Blvd-Mahopac-NY-10541/31906664_zpid/","type":"SINGLE_FAMILY"},{"id":"31906226","zpid":"31906226","address":"34 Steiner Drive, Mahopac, NY 10541","street":"","city":"Mahopac","state":"NY","zip":"10541","price":730000,"beds":4,"baths":3,"sqft":2400,"lat":41.39523,"lng":-73.776855,"lotSqft":20100,"rentZestimate":null,"taxAssessed":595600,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":71,"url":"https://www.zillow.com/homedetails/34-Steiner-Dr-Mahopac-NY-10541/31906226_zpid/","type":"SINGLE_FAMILY"},{"id":"33099541","zpid":"33099541","address":"182 Heritage Hills #A, Somers, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":475000,"beds":2,"baths":2,"sqft":1400,"lat":41.342983,"lng":-73.686104,"lotSqft":10000,"rentZestimate":null,"taxAssessed":36400,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":27,"url":"https://www.zillow.com/homedetails/182-Heritage-Hls-UNIT-A-Somers-NY-10589/33099541_zpid/","type":"CONDO"},{"id":"447545411","zpid":"447545411","address":"348 Heritage Hills #A, Somers, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":596000,"beds":2,"baths":2,"sqft":1400,"lat":41.334084,"lng":-73.70183,"lotSqft":37897,"rentZestimate":null,"taxAssessed":null,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":120,"url":"https://www.zillow.com/homedetails/348-Heritage-Hls-A-Somers-NY-10589/447545411_zpid/","type":"CONDO"},{"id":"58422883","zpid":"58422883","address":"3841 Indian Hill Road, Shrub Oak, NY 10588","street":"","city":"Shrub Oak","state":"NY","zip":"10588","price":690000,"beds":3,"baths":2,"sqft":1900,"lat":41.336308,"lng":-73.80686,"lotSqft":39204,"rentZestimate":null,"taxAssessed":9300,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":239,"url":"https://www.zillow.com/homedetails/3841-Indian-Hill-Rd-Shrub-Oak-NY-10588/58422883_zpid/","type":"SINGLE_FAMILY"},{"id":"460345588","zpid":"460345588","address":"243 Heritage Hills Drive #B, Somers, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":749000,"beds":3,"baths":2,"sqft":1900,"lat":41.338284,"lng":-73.68463,"lotSqft":99752,"rentZestimate":null,"taxAssessed":null,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":5,"url":"https://www.zillow.com/homedetails/243-Heritage-Hills-Dr-B-Somers-NY-10589/460345588_zpid/","type":"CONDO"},{"id":"33098420","zpid":"33098420","address":"798 Heritage Hills Drive #D, Somers, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":599000,"beds":2,"baths":2,"sqft":1400,"lat":41.3419,"lng":-73.71246,"lotSqft":48351,"rentZestimate":null,"taxAssessed":21240,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":167,"url":"https://www.zillow.com/homedetails/798-Heritage-Hls-UNIT-D-Somers-NY-10589/33098420_zpid/","type":"CONDO"},{"id":"458901550","zpid":"458901550","address":"59 Heritage Hills #A, Somers, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":675000,"beds":3,"baths":2,"sqft":1900,"lat":41.332577,"lng":-73.68685,"lotSqft":48787,"rentZestimate":null,"taxAssessed":null,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":63,"url":"https://www.zillow.com/homedetails/59-Heritage-Hls-A-Somers-NY-10589/458901550_zpid/","type":"CONDO"},{"id":"31922760","zpid":"31922760","address":"11 Cross Creek Road, Cold Spring, NY 10516","street":"","city":"Cold Spring","state":"NY","zip":"10516","price":799999,"beds":6,"baths":3,"sqft":3400,"lat":41.449223,"lng":-73.91535,"lotSqft":55321,"rentZestimate":null,"taxAssessed":468602,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":48,"url":"https://www.zillow.com/homedetails/11-Cross-Creek-Rd-Cold-Spring-NY-10516/31922760_zpid/","type":"SINGLE_FAMILY"},{"id":"58422895","zpid":"58422895","address":"398 E Main Street, Jefferson Valley, NY 10535","street":"","city":"Jefferson Valley","state":"NY","zip":"10535","price":589000,"beds":4,"baths":2,"sqft":2400,"lat":41.33691,"lng":-73.79815,"lotSqft":13068,"rentZestimate":4378,"taxAssessed":6300,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":184,"url":"https://www.zillow.com/homedetails/398-E-Main-St-Jefferson-Valley-NY-10535/58422895_zpid/","type":"SINGLE_FAMILY"},{"id":"307018937","zpid":"307018937","address":"4 Adson Way, Somers, NY 10541","street":"","city":"Mahopac","state":"NY","zip":"10541","price":1600000,"beds":4,"baths":4,"sqft":2400,"lat":41.343018,"lng":-73.720184,"lotSqft":40511,"rentZestimate":null,"taxAssessed":105900,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":148,"url":"https://www.zillow.com/homedetails/4-Adson-Way-Mahopac-NY-10541/307018937_zpid/","type":"SINGLE_FAMILY"},{"id":"31822073","zpid":"31822073","address":"94 Mearns Avenue, Highland Falls, NY 10928","street":"","city":"Highland Falls","state":"NY","zip":"10928","price":665000,"beds":5,"baths":3,"sqft":2900,"lat":41.367165,"lng":-73.971985,"lotSqft":23400,"rentZestimate":null,"taxAssessed":463100,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":101,"url":"https://www.zillow.com/homedetails/94-Mearns-Ave-Highland-Falls-NY-10928/31822073_zpid/","type":"SINGLE_FAMILY"},{"id":"31821699","zpid":"31821699","address":"34 Lake Street, Highland Falls, NY 10928","street":"","city":"Highland Falls","state":"NY","zip":"10928","price":325000,"beds":2,"baths":1,"sqft":1400,"lat":41.37505,"lng":-73.96576,"lotSqft":4500,"rentZestimate":null,"taxAssessed":251400,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":60,"url":"https://www.zillow.com/homedetails/34-Lake-St-Highland-Falls-NY-10928/31821699_zpid/","type":"SINGLE_FAMILY"},{"id":"31909686","zpid":"31909686","address":"270 Buckshollow Road, Mahopac, NY 10541","street":"","city":"Mahopac","state":"NY","zip":"10541","price":355000,"beds":2,"baths":1,"sqft":1400,"lat":41.36786,"lng":-73.73725,"lotSqft":30491,"rentZestimate":null,"taxAssessed":331000,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":32,"url":"https://www.zillow.com/homedetails/270-Buckshollow-Rd-Mahopac-NY-10541/31909686_zpid/","type":"SINGLE_FAMILY"},{"id":"33099316","zpid":"33099316","address":"578 Heritage Hills #D, Somers, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":450000,"beds":1,"baths":2,"sqft":900,"lat":41.340775,"lng":-73.70948,"lotSqft":871,"rentZestimate":null,"taxAssessed":31000,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":15,"url":"https://www.zillow.com/homedetails/578-Heritage-Hls-UNIT-D-Somers-NY-10589/33099316_zpid/","type":"CONDO"},{"id":"31908342","zpid":"31908342","address":"110 Wayacross Road, Mahopac, NY 10541","street":"","city":"Mahopac","state":"NY","zip":"10541","price":710000,"beds":4,"baths":2,"sqft":2400,"lat":41.36259,"lng":-73.78915,"lotSqft":21390,"rentZestimate":null,"taxAssessed":489100,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":34,"url":"https://www.zillow.com/homedetails/110-Wayacross-Rd-Mahopac-NY-10541/31908342_zpid/","type":"SINGLE_FAMILY"},{"id":"2056652834","zpid":"2056652834","address":"443 Heritage Hills #A, Somers, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":625000,"beds":2,"baths":2,"sqft":1400,"lat":41.34073,"lng":-73.70609,"lotSqft":44866,"rentZestimate":null,"taxAssessed":null,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":56,"url":"https://www.zillow.com/homedetails/443-Heritage-Hls-443-A-Somers-NY-10589/2056652834_zpid/","type":"CONDO"},{"id":"31821829","zpid":"31821829","address":"50 Schneider Avenue, Highland Falls, NY 10928","street":"","city":"Highland Falls","state":"NY","zip":"10928","price":310000,"beds":2,"baths":1,"sqft":1400,"lat":41.371746,"lng":-73.96835,"lotSqft":3000,"rentZestimate":null,"taxAssessed":246600,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":58,"url":"https://www.zillow.com/homedetails/50-Schneider-Ave-Highland-Falls-NY-10928/31821829_zpid/","type":"SINGLE_FAMILY"},{"id":"459897743","zpid":"459897743","address":"140 Heritage Hills #A, Somers, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":645000,"beds":3,"baths":2,"sqft":1900,"lat":41.339527,"lng":-73.68807,"lotSqft":871,"rentZestimate":null,"taxAssessed":null,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":22,"url":"https://www.zillow.com/homedetails/140-Heritage-Hls-A-Somers-NY-10589/459897743_zpid/","type":"CONDO"},{"id":"33101539","zpid":"33101539","address":"537 Heritage Hills #D, Somers, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":600000,"beds":2,"baths":2,"sqft":1400,"lat":41.3344,"lng":-73.71218,"lotSqft":46173,"rentZestimate":null,"taxAssessed":48750,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":35,"url":"https://www.zillow.com/homedetails/537-Heritage-Hls-UNIT-D-Somers-NY-10589/33101539_zpid/","type":"CONDO"},{"id":"208534106","zpid":"208534106","address":"5 Forge Gate Drive #C2, Cold Spring, NY 10516","street":"","city":"Cold Spring","state":"NY","zip":"10516","price":329000,"beds":1,"baths":1,"sqft":900,"lat":41.41666,"lng":-73.95697,"lotSqft":436,"rentZestimate":null,"taxAssessed":177725,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":14,"url":"https://www.zillow.com/homedetails/5-Forge-Gate-Dr-APT-C2-Cold-Spring-NY-10516/208534106_zpid/","type":"CONDO"},{"id":"131686536","zpid":"131686536","address":"7 Tulip Road, Lincolndale, NY 10540","street":"","city":"Lincolndale","state":"NY","zip":"10540","price":899900,"beds":3,"baths":4,"sqft":1900,"lat":41.344433,"lng":-73.73277,"lotSqft":23958,"rentZestimate":null,"taxAssessed":50000,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":94,"url":"https://www.zillow.com/homedetails/7-Tulip-Rd-Lincolndale-NY-10540/131686536_zpid/","type":"SINGLE_FAMILY"},{"id":"448961565","zpid":"448961565","address":"2680 Route 9, Cold Spring, NY 10516","street":"","city":"Cold Spring","state":"NY","zip":"10516","price":3800000,"beds":2,"baths":3,"sqft":1400,"lat":41.427216,"lng":-73.91412,"lotSqft":3717410,"rentZestimate":null,"taxAssessed":null,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":319,"url":"https://www.zillow.com/homedetails/2680-Route-9-Cold-Spring-NY-10516/448961565_zpid/","type":"SINGLE_FAMILY"},{"id":"31906140","zpid":"31906140","address":"219 Elm Road, Mahopac, NY 10541","street":"","city":"Mahopac","state":"NY","zip":"10541","price":499900,"beds":3,"baths":2,"sqft":1900,"lat":41.38003,"lng":-73.79179,"lotSqft":3920,"rentZestimate":null,"taxAssessed":357200,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":14,"url":"https://www.zillow.com/homedetails/219-Elm-Rd-Mahopac-NY-10541/31906140_zpid/","type":"SINGLE_FAMILY"},{"id":"62880566","zpid":"62880566","address":"882 Heritage Hills #D, Somers, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":750000,"beds":2,"baths":3,"sqft":1400,"lat":41.348454,"lng":-73.70863,"lotSqft":49222,"rentZestimate":4185,"taxAssessed":25704,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":14,"url":"https://www.zillow.com/homedetails/882-Heritage-Hls-UNIT-D-Somers-NY-10589/62880566_zpid/","type":"CONDO"},{"id":"33100057","zpid":"33100057","address":"Lot 11 Florence Drive, Somers, NY 10541","street":"","city":"Mahopac","state":"NY","zip":"10541","price":1645000,"beds":5,"baths":5,"sqft":2900,"lat":41.33552,"lng":-73.72475,"lotSqft":2,"rentZestimate":null,"taxAssessed":64900,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":3,"url":"https://www.zillow.com/homedetails/11-Florence-Dr-Mahopac-NY-10541/33100057_zpid/","type":"SINGLE_FAMILY"},{"id":"460311795","zpid":"460311795","address":"839 Heritage Hills #B, Somers NY, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":625000,"beds":1,"baths":2,"sqft":900,"lat":41.348022,"lng":-73.71667,"lotSqft":10000,"rentZestimate":null,"taxAssessed":null,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":6,"url":"https://www.zillow.com/homedetails/839-Heritage-Hls-B-Somers-NY-10589/460311795_zpid/","type":"CONDO"},{"id":"31928134","zpid":"31928134","address":"27 Spruce Street, Lake Peekskill, NY 10537","street":"","city":"Lake Peekskill","state":"NY","zip":"10537","price":600000,"beds":2,"baths":2,"sqft":1400,"lat":41.33208,"lng":-73.886635,"lotSqft":17444,"rentZestimate":null,"taxAssessed":409400,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":151,"url":"https://www.zillow.com/homedetails/27-Spruce-St-Lake-Peekskill-NY-10537/31928134_zpid/","type":"SINGLE_FAMILY"},{"id":"31822184","zpid":"31822184","address":"43 Villa Parkway, Highland Falls, NY 10928","street":"","city":"Highland Falls","state":"NY","zip":"10928","price":850000,"beds":6,"baths":3,"sqft":3400,"lat":41.363853,"lng":-73.96985,"lotSqft":13504,"rentZestimate":null,"taxAssessed":374400,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":306,"url":"https://www.zillow.com/homedetails/43-Villa-Pkwy-Highland-Falls-NY-10928/31822184_zpid/","type":"SINGLE_FAMILY"},{"id":"33102118","zpid":"33102118","address":"129 Heritage Hills #A, Somers, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":414900,"beds":1,"baths":1,"sqft":900,"lat":41.336487,"lng":-73.68563,"lotSqft":30927,"rentZestimate":null,"taxAssessed":33150,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":28,"url":"https://www.zillow.com/homedetails/129-Heritage-Hls-UNIT-A-Somers-NY-10589/33102118_zpid/","type":"CONDO"},{"id":"58422619","zpid":"58422619","address":"1231 crestward, Shrub Oak, NY 10588","street":"","city":"Shrub Oak","state":"NY","zip":"10588","price":719900,"beds":3,"baths":3,"sqft":1900,"lat":41.33355,"lng":-73.835976,"lotSqft":10000,"rentZestimate":null,"taxAssessed":7950,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":193,"url":"https://www.zillow.com/homedetails/1231-Crestward-Ave-Shrub-Oak-NY-10588/58422619_zpid/","type":"SINGLE_FAMILY"},{"id":"31904466","zpid":"31904466","address":"64 Hillside View Road, Mahopac, NY 10541","street":"","city":"Mahopac","state":"NY","zip":"10541","price":715000,"beds":5,"baths":4,"sqft":2900,"lat":41.40157,"lng":-73.78393,"lotSqft":151153,"rentZestimate":null,"taxAssessed":688800,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":64,"url":"https://www.zillow.com/homedetails/64-Hillside-View-Rd-Mahopac-NY-10541/31904466_zpid/","type":"SINGLE_FAMILY"},{"id":"457306204","zpid":"457306204","address":"593B Heritage Hills, Somers, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":1100000,"beds":3,"baths":2,"sqft":1900,"lat":41.33558,"lng":-73.68987,"lotSqft":10000,"rentZestimate":null,"taxAssessed":null,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":126,"url":"https://www.zillow.com/homedetails/593B-Heritage-Hls-Somers-NY-10589/457306204_zpid/","type":"CONDO"},{"id":"33101917","zpid":"33101917","address":"55 Heritage Hills #A, Somers, NY 10589","street":"","city":"Somers","state":"NY","zip":"10589","price":675000,"beds":2,"baths":2,"sqft":1400,"lat":41.332905,"lng":-73.686844,"lotSqft":10000,"rentZestimate":null,"taxAssessed":45650,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":56,"url":"https://www.zillow.com/homedetails/55-Heritage-Hls-A-Somers-NY-10589/33101917_zpid/","type":"CONDO"},{"id":"456257348","zpid":"456257348","address":"2069 Summit Loop #98, Carmel, NY 10512","street":"","city":"Carmel","state":"NY","zip":"10512","price":898000,"beds":2,"baths":2,"sqft":1400,"lat":41.38605,"lng":-73.75823,"lotSqft":10000,"rentZestimate":null,"taxAssessed":null,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":94,"url":"https://www.zillow.com/homedetails/2069-Summit-Loop-98-Carmel-NY-10512/456257348_zpid/","type":"CONDO"},{"id":"58422887","zpid":"58422887","address":"3811 Wood St, Jefferson Valley, NY 10535","street":"","city":"Jefferson valley","state":"NY","zip":"10535","price":370000,"beds":3,"baths":2,"sqft":1900,"lat":41.338875,"lng":-73.79985,"lotSqft":174240,"rentZestimate":4497,"taxAssessed":8500,"hoaFee":0,"yearBuilt":null,"stories":null,"daysOnZillow":42,"url":"https://www.zillow.com/homedetails/3811-Wood-St-Jefferson-Valley-NY-10535/58422887_zpid/","type":"SINGLE_FAMILY"}];
+
+// ═══════════════ STATE ═══════════════
+let state = {
+  dp: 20, rate: 6.75, hold: 7, appr: 3.5, rg: 3, maint: 1.5, sc: 6, ptax: 2.1, ins: 0.5, sp: 10,
+  intent: 'live', view: 'list', sort: 'alpha', fBeds: 0, fMax: 5000000, fType: 'all', q: '',
+  sel: null, cmp: [], charts: {},
+  // Renovation: 'move_in' | 'light' | 'moderate' | 'gut'
+  renov: 'move_in'
+};
+
+// ═══════════════ CLOSING COSTS (State-Dependent) ═══════════════
+// Per methodology: TotalCC = (Price × α) + (LoanAmt × β) + FlatFees + Prepaids
+// NY: α=2.25%, β=2.0%, Flat=$5000, Prepaids=$3500 (midpoints of NY ranges)
+const CLOSING_COST_PARAMS = {
+  NY: { alpha: 0.0225, beta: 0.020, flat: 5000, prepaids: 3500 },
+  DEFAULT: { alpha: 0.0125, beta: 0.015, flat: 3000, prepaids: 2500 }
+};
+function calcClosingCosts(price, state_code) {
+  const params = CLOSING_COST_PARAMS[state_code] || CLOSING_COST_PARAMS.DEFAULT;
+  const loan = price * (1 - (state.dp || 20) / 100);
+  return price * params.alpha + loan * params.beta + params.flat + params.prepaids;
+}
+
+// ═══════════════ RENOVATION ENGINE ═══════════════
+// Per methodology: InitialRenovation = PropertySF × StateAdjustedCost × a × (1 + Contingency)
+// Northeast multiplier = 1.25 (NY); BaseCost = $250/sf
+const RENOV_PARAMS = {
+  move_in: { a: 0.01, vacancy_mo: 0,  contingency: 0.00, label: 'Move-in Ready' },
+  light:   { a: 0.25, vacancy_mo: 1,  contingency: 0.05, label: 'Light Cosmetic' },
+  moderate:{ a: 0.60, vacancy_mo: 4,  contingency: 0.10, label: 'Moderate' },
+  gut:     { a: 1.00, vacancy_mo: 9,  contingency: 0.15, label: 'Gut Renovation' }
+};
+const BASE_RENOV_COST_SF = 250; // national baseline $/sf
+const STATE_LABOR_MULT = { NY: 1.25, CA: 1.5, TX: 1.1, FL: 1.1, DEFAULT: 1.0 };
+
+function calcRenovation(l, renovKey) {
+  const rp = RENOV_PARAMS[renovKey] || RENOV_PARAMS.move_in;
+  const mult = STATE_LABOR_MULT[l.state] || STATE_LABOR_MULT.DEFAULT;
+  const adjCost = BASE_RENOV_COST_SF * mult;
+  const baseCost = (l.sqft || 1500) * adjCost * rp.a * (1 + rp.contingency);
+  return { cost: Math.round(baseCost), vacancy_mo: rp.vacancy_mo, label: rp.label };
+}
+
+// ═══════════════ RENTAL INCOME ENGINE ═══════════════
+// Per methodology: max(sqft × (PricePerSqft × 0.005 + 0.30), Price × 0.004)
+// Note: methodology uses 0.4% monthly = 4.8% annual gross yield
+function estRent(l) {
+  if (l.rentZestimate) return l.rentZestimate;
+  const pricePerSqft = l.sqft > 0 ? l.price / l.sqft : 300;
+  const sqftBased = l.sqft * (pricePerSqft * 0.005 + 0.30);
+  const priceBased = l.price * 0.004;
+  return Math.round(Math.max(sqftBased, priceBased));
+}
+
+// ═══════════════ VACANCY ENGINE ═══════════════
+// Per methodology:
+//   Year 1 vacancy = renovVacancy/12 + baseVacancy
+//   Year 2+: baseVacancy
+//   Putnam County / NY MSA base vacancy ≈ 5.5% (stabilized suburban)
+const BASE_VACANCY = 0.055;
+function calcVacancy(renovKey, yr) {
+  const rp = RENOV_PARAMS[renovKey] || RENOV_PARAMS.move_in;
+  if (yr === 1) return rp.vacancy_mo / 12 + BASE_VACANCY;
+  return BASE_VACANCY;
+}
+
+// ═══════════════ FULL IRR ENGINE ═══════════════
+// Per methodology:
+//   CF₀ = -(DownPayment + ClosingCosts + InitialRenovation)
+//   CF_t (annual) = GrossRent×(1−vacancy) − OE − MortgagePayments
+//   CF_N += SaleProceeds − RemainingLoanBalance
+//   OE = HomeValue×(TaxRate + InsRate + MaintRate) + HOA×12
+//   SaleProceeds = HomeValueN × (1 − SellingCost%)
+function calcIRR(l, p) {
+  const price = l.price;
+  const dpFrac = (p.dp || 20) / 100;
+  const down = price * dpFrac;
+  const loan = price - down;
+
+  // Closing costs: state-dependent formula
+  const cc = calcClosingCosts(price, l.state || 'NY');
+
+  // Renovation: driven by renov param
+  const renov = calcRenovation(l, p.renov || 'move_in');
+
+  // Initial outlay (CF₀)
+  const init = down + cc + renov.cost;
+
+  // Mortgage amortization (standard fixed-rate, 30-yr)
+  // M = L × [r(1+r)ⁿ / ((1+r)ⁿ - 1)]
+  const mr = (p.rate || 6.75) / 100 / 12;
+  const n = 360;
+  const mp = loan > 0 && mr > 0
+    ? loan * (mr * Math.pow(1 + mr, n)) / (Math.pow(1 + mr, n) - 1)
+    : loan / n;
+
+  const rent = estRent(l);
+  const cf = [-init];
+  let bal = loan;
+
+  for (let yr = 1; yr <= p.hold; yr++) {
+    // Track loan balance month-by-month (per methodology §2.3.3)
+    let yearlyInterest = 0;
+    for (let m = 0; m < 12; m++) {
+      const ip = bal * mr;
+      yearlyInterest += ip;
+      bal = Math.max(0, bal - (mp - ip));
+    }
+
+    // Home value appreciation
+    const hv = price * Math.pow(1 + (p.appr || 3.5) / 100, yr);
+
+    // Gross rental income with growth, adjusted for vacancy
+    const vacancy = calcVacancy(p.renov || 'move_in', yr);
+    const grossRent = rent * 12 * Math.pow(1 + (p.rg || 3) / 100, yr - 1);
+    const netRent = grossRent * (1 - vacancy);
+
+    // Operating expenses (% of current home value + fixed HOA)
+    // OE = HomeValue × (TaxRate + InsRate + MaintRate) + HOA×12
+    const oe = hv * ((p.ptax || 2.1) + (p.ins || 0.5) + (p.maint || 1.5)) / 100
+              + (l.hoaFee || 0) * 12;
+
+    // NOI = NetRent - OE
+    const noi = netRent - oe;
+
+    // Annual cash flow = NOI - MortgagePayments
+    const annualCF = noi - mp * 12;
+
+    if (yr < p.hold) {
+      cf.push(annualCF);
+    } else {
+      // Terminal year: add sale proceeds net of selling costs and remaining balance
+      const saleProceeds = hv * (1 - (p.sc || 6) / 100);
+      const terminalCF = annualCF + saleProceeds - Math.max(0, bal);
+      cf.push(terminalCF);
+    }
+  }
+
+  // Newton's method for IRR (§2.4): r₀=0.08, convergence |Δr|<0.0001, max 80 iters
+  let r = 0.08;
+  for (let i = 0; i < 80; i++) {
+    let npv = 0, dn = 0;
+    for (let t = 0; t < cf.length; t++) {
+      const disc = Math.pow(1 + r, t);
+      npv += cf[t] / disc;
+      if (t > 0) dn -= t * cf[t] / (disc * (1 + r));
+    }
+    if (Math.abs(dn) < 1e-10) break;
+    const nr = r - npv / dn;
+    if (Math.abs(nr - r) < 0.0001) { r = nr; break; }
+    r = isNaN(nr) || !isFinite(nr) ? 0 : nr;
+    if (r === 0) break;
+  }
+  if (isNaN(r) || !isFinite(r)) r = 0;
+
+  // Opportunity Cost (§6)
+  // S&P_FutureValue = InitialInvestment × (1 + S&P_Return%)^HoldYears
+  const spFV = init * Math.pow(1 + (p.sp || 10) / 100, p.hold);
+  const spGain = spFV - init;
+
+  // Net property wealth = sum of all cash flows
+  const propNetWealth = cf.reduce((a, b) => a + b, 0);
+
+  // OpportunityCost > 0 means leaving money on table vs equities
+  const oppCost = spGain - propNetWealth;
+
+  return {
+    irr: r * 100,
+    init,
+    cc,
+    renovCost: renov.cost,
+    renovLabel: renov.label,
+    propNetWealth,
+    mp,
+    rent,
+    spGain,
+    oppCost,
+    alpha: r * 100 - (p.sp || 10),
+    cf,
+    vacancy: calcVacancy(p.renov || 'move_in', 1)
+  };
+}
+
+// ═══════════════ ALPHA SCORE (§3) ═══════════════
+// AlphaScore = clamp(50 + (Alpha/10)×50, 0, 100)
+// Score ≥ 70 = STRONG BUY; 45-69 = NEUTRAL; 0-44 = WEAK/PASS
+function alphaScore(l, p) {
+  const r = calcIRR(l, p);
+  return Math.max(0, Math.min(100, Math.round(50 + (r.alpha / 10) * 50)));
+}
+
+// ═══════════════ RISK SCORE (§4) ═══════════════
+// Base 70, clamped [20, 95]
+// Factors: Market Absorption, Pricing Discipline, Land Value, Configuration
+function riskScore(l) {
+  let s = 70;
+  // Market Absorption: days on market proxy for demand/liquidity risk
+  if (l.daysOnZillow > 180) s -= 15;
+  else if (l.daysOnZillow > 90) s -= 8;
+  else if (l.daysOnZillow >= 14 && l.daysOnZillow <= 90) s += 0; // baseline
+  else if (l.daysOnZillow < 14) s += 5;
+  // Pricing Discipline: price vs tax assessed value ratio
+  if (l.taxAssessed && l.taxAssessed > 0) {
+    const ratio = l.price / l.taxAssessed;
+    if (ratio > 1.5) s -= 10;       // overpriced risk
+    else if (ratio < 0.9) s += 8;   // potential value
+  }
+  // Land Value: lot size >40,000 sqft carries intrinsic optionality
+  if (l.lotSqft > 40000) s += 3;
+  // Configuration: 3+ beds and 2+ baths = broad market appeal
+  if (l.beds >= 3 && l.baths >= 2) s += 3;
+  return Math.max(20, Math.min(95, s));
+}
+
+// ═══════════════ FORMATTING ═══════════════
+const fmt = n => n >= 1e6 ? `$${(n/1e6).toFixed(1)}M` : n >= 1e3 ? `$${(n/1e3).toFixed(0)}K` : `$${n.toFixed(0)}`;
+const fmtF = n => `$${Math.round(n).toLocaleString()}`;
+const fmtP = n => `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`;
+const scoreCol = a => a >= 70 ? 'var(--green)' : a >= 45 ? 'var(--amber)' : 'var(--red)';
+const addr = l => l.street || l.address.split(',')[0];
+
+// ═══════════════ SVG GAUGE ═══════════════
+function gaugeHTML(score, sz = 120) {
+  const r = sz * 0.38, cx = sz / 2, cy = sz * 0.55;
+  const rad = a => a * Math.PI / 180;
+  const arc = (s, e, R) => {
+    const x1 = cx + R * Math.cos(rad(s)), y1 = cy + R * Math.sin(rad(s));
+    const x2 = cx + R * Math.cos(rad(e)), y2 = cy + R * Math.sin(rad(e));
+    return `M ${x1} ${y1} A ${R} ${R} 0 ${e - s > 180 ? 1 : 0} 1 ${x2} ${y2}`;
+  };
+  const ang = -210 + (score / 100) * 240;
+  const col = score >= 70 ? '#10b981' : score >= 45 ? '#f59e0b' : '#ef4444';
+  const lbl = score >= 70 ? 'STRONG' : score >= 45 ? 'NEUTRAL' : 'WEAK';
+  return `<svg width="${sz}" height="${sz * 0.7}" viewBox="0 0 ${sz} ${sz * 0.7}">
+    <path d="${arc(-210, 30, r)}" fill="none" stroke="#1e293b" stroke-width="${sz * 0.07}" stroke-linecap="round"/>
+    <path d="${arc(-210, ang, r)}" fill="none" stroke="${col}" stroke-width="${sz * 0.07}" stroke-linecap="round"/>
+    <text x="${cx}" y="${cy - 4}" text-anchor="middle" fill="${col}" font-size="${sz * 0.22}" font-weight="800" font-family="'JetBrains Mono',monospace">${score}</text>
+    <text x="${cx}" y="${cy + sz * 0.12}" text-anchor="middle" fill="#94a3b8" font-size="${sz * 0.08}" font-weight="600" letter-spacing="2">${lbl}</text>
+  </svg>`;
+}
+
+// ═══════════════ FILTERING & SORTING ═══════════════
+function getFiltered() {
+  let list = L.filter(l => {
+    if (state.fBeds > 0 && l.beds < state.fBeds) return false;
+    if (l.price > state.fMax) return false;
+    if (state.fType !== 'all' && l.type !== state.fType) return false;
+    if (state.q && !l.address.toLowerCase().includes(state.q.toLowerCase()) && !l.city.toLowerCase().includes(state.q.toLowerCase())) return false;
+    return true;
+  }).map(l => ({ l, a: alphaScore(l, state), irr: calcIRR(l, state).irr, nw: calcIRR(l, state).propNetWealth }));
+
+  if (state.sort === 'alpha') list.sort((a, b) => b.a - a.a);
+  else if (state.sort === 'irr') list.sort((a, b) => b.irr - a.irr);
+  else if (state.sort === 'price_asc') list.sort((a, b) => a.l.price - b.l.price);
+  else if (state.sort === 'price_desc') list.sort((a, b) => b.l.price - a.l.price);
+  else if (state.sort === 'wealth') list.sort((a, b) => b.nw - a.nw); // nw = propNetWealth alias
+  return list;
+}
+
+// ═══════════════ RENDER FUNCTIONS ═══════════════
+function renderHeader() {
+  const intents = [['live','🏠 Live'],['hack','🔑 Hack'],['rent','📊 Rent'],['flip','🔨 Flip']];
+  const views = [['list','Rankings'],['detail','Analysis'],['compare',`Compare${state.cmp.length ? ` (${state.cmp.length})` : ''}`]];
+  document.getElementById('intentBtns').innerHTML = intents.map(([k, lb]) =>
+    `<button class="${state.intent === k ? 'active' : ''}" onclick="setIntent('${k}')">${lb}</button>`
+  ).join('');
+  document.getElementById('viewBtns').innerHTML = views.map(([k, lb]) =>
+    `<button class="${state.view === k ? 'active2' : ''}" onclick="setView('${k}')">${lb}</button>`
+  ).join('');
+}
+
+function renderMarketBar() {
+  const fl = getFiltered();
+  const avgIRR = fl.length ? fl.reduce((a, b) => a + b.irr, 0) / fl.length : 0;
+  const medP = fl.length ? [...fl].sort((a, b) => a.l.price - b.l.price)[Math.floor(fl.length / 2)].l.price : 0;
+  document.getElementById('marketBar').innerHTML = `
+    <div><span class="label">Properties: </span><span class="val" style="color:var(--cyan)">${fl.length}</span></div>
+    <div><span class="label">Avg IRR: </span><span class="val" style="color:${avgIRR >= 0 ? 'var(--green)' : 'var(--red)'}">${fmtP(avgIRR)}</span></div>
+    <div><span class="label">Median: </span><span class="val" style="color:var(--text)">${fmt(medP)}</span></div>
+    <div><span class="label">S&P: </span><span class="val" style="color:var(--purple)">${state.sp}%</span></div>
+    <div style="color:var(--text3)">Putnam County, NY</div>
+  `;
+}
+
+function renderSidebar() {
+  const fbtn = (v, lb, key) => `<button class="filter-btn ${state[key] === v ? 'active' : ''}" onclick="state.${key}=${typeof v==='string'?"'"+v+"'":v};render()">${lb}</button>`;
+  document.getElementById('sidebar').innerHTML = `
+    <input class="search-input" type="text" placeholder="Search address or city..." value="${state.q}" oninput="state.q=this.value;render()">
+    <div class="section-label">Filters</div>
+    <div style="display:flex;gap:3px;margin-bottom:8px;flex-wrap:wrap">
+      ${[0,2,3,4].map(b => fbtn(b, b === 0 ? 'Any' : b+'+bd', 'fBeds')).join('')}
+    </div>
+    <div style="display:flex;gap:3px;margin-bottom:8px;flex-wrap:wrap">
+      ${[['all','All'],['SINGLE_FAMILY','Houses'],['CONDO','Condos']].map(([v, lb]) => fbtn(v, lb, 'fType')).join('')}
+    </div>
+    <div class="slider-row">
+      <div class="slider-head"><span class="slider-label">Max Price</span><span class="slider-val">$${(state.fMax/1000).toFixed(0)}K</span></div>
+      <input type="range" min="200000" max="5000000" step="50000" value="${state.fMax}" oninput="state.fMax=Number(this.value);render()">
+    </div>
+    <div class="section-label">Sort</div>
+    <select class="select-ctrl" onchange="state.sort=this.value;render()">
+      ${[['alpha','Alpha Score'],['irr','IRR'],['wealth','Net Wealth'],['price_asc','Price ↑'],['price_desc','Price ↓']].map(([v, lb]) => `<option value="${v}" ${state.sort===v?'selected':''}>${lb}</option>`).join('')}
+    </select>
+    <div class="section-label">Property Condition</div>
+    <select class="select-ctrl" onchange="state.renov=this.value;render()">
+      ${[['move_in','Move-in Ready (0% renov)'],['light','Light Cosmetic (~25% SF, 1mo vacancy)'],['moderate','Moderate (~60% SF, 4mo vacancy)'],['gut','Gut Renovation (100% SF, 9mo vacancy)']].map(([v, lb]) => `<option value="${v}" ${state.renov===v?'selected':''}>${lb}</option>`).join('')}
+    </select>
+    <div class="section-label">Scenario Engine</div>
+    ${slider('Down Payment','dp',3,40,1,'%')}
+    ${slider('Mortgage Rate','rate',4,10,0.25,'%')}
+    ${slider('Hold Period','hold',1,15,1,' yr')}
+    ${slider('Appreciation','appr',-2,8,0.5,'%')}
+    ${slider('Rent Growth','rg',-2,8,0.5,'%')}
+    ${slider('Maintenance','maint',0.5,4,0.1,'%')}
+    ${slider('Property Tax','ptax',0.5,4,0.1,'%')}
+    ${slider('Insurance','ins',0.2,1.5,0.05,'%')}
+    ${slider('S&P Return','sp',4,15,0.5,'%')}
+    <div class="section-label">Stress Tests</div>
+    <button class="stress-btn" onclick="Object.assign(state,{appr:5,rg:4,rate:5.5});render()">🟢 Bull (+5%/+4%/5.5%)</button>
+    <button class="stress-btn" onclick="Object.assign(state,{appr:3.5,rg:3,rate:6.75});render()">⚪ Base (3.5%/3%/6.75%)</button>
+    <button class="stress-btn" onclick="Object.assign(state,{appr:-1,rg:1,rate:7.5});render()">🔴 Recession (−1%/+1%/7.5%)</button>
+    <button class="stress-btn" onclick="Object.assign(state,{appr:3.5,rg:3,rate:9.0});render()">🟡 Rate Shock (6.75→9%)</button>
+    <button class="stress-btn" onclick="Object.assign(state,{dp:20,rate:6.75,hold:7,appr:3.5,rg:3,maint:1.5,ptax:2.1,ins:0.5,sp:10,renov:'move_in'});render()">↺ Reset Defaults</button>
+  `;
+}
+
+function slider(label, key, min, max, step, suf) {
+  return `<div class="slider-row">
+    <div class="slider-head"><span class="slider-label">${label}</span><span class="slider-val">${state[key]}${suf}</span></div>
+    <input type="range" min="${min}" max="${max}" step="${step}" value="${state[key]}" oninput="state.${key}=Number(this.value);render()">
+  </div>`;
+}
+
+function renderMain() {
+  const fl = getFiltered();
+  const mp = document.getElementById('mainPanel');
+  const sr = document.getElementById('sidebarR');
+  mp.className = state.view === 'list' ? 'main' : 'main-detail';
+  sr.style.display = (state.view === 'detail' || state.view === 'compare') ? 'block' : 'none';
+
+  if (state.view === 'list') {
+    mp.innerHTML = fl.length ? fl.map((item, idx) => cardHTML(item, idx + 1)).join('') : '<div class="empty-state">No matches. Adjust filters.</div>';
+  } else if (state.view === 'detail') {
+    if (state.sel) {
+      mp.innerHTML = detailHTML(state.sel);
+      setTimeout(() => renderCharts(state.sel), 50);
+    } else {
+      mp.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div>Select a property from Rankings</div>';
+    }
+  } else if (state.view === 'compare') {
+    mp.innerHTML = compareHTML();
+    if (state.cmp.length >= 2) setTimeout(renderCompareChart, 50);
+  }
+
+  // Right sidebar
+  if (state.view === 'detail' || state.view === 'compare') {
+    sr.innerHTML = `<div class="section-label">Top Ranked</div>` + fl.slice(0, 10).map((item, idx) =>
+      `<div class="qp-item ${state.sel?.id === item.l.id ? 'active' : ''}" onclick="selectListing('${item.l.id}')">
+        <div class="qp-addr">#${idx + 1} ${addr(item.l)}</div>
+        <div class="qp-row"><span class="qp-price">${fmt(item.l.price)}</span><span class="qp-alpha" style="color:${scoreCol(item.a)}">α${item.a}</span></div>
+      </div>`
+    ).join('');
+  }
+}
+
+function cardHTML(item, rank) {
+  const l = item.l, r = calcIRR(l, state), a = item.a;
+  const ac = scoreCol(a);
+  const isCmp = state.cmp.some(c => c.id === l.id);
+  return `<div class="card ${state.sel?.id === l.id ? 'selected' : ''}" onclick="selectListing('${l.id}')">
+    <div class="card-rank ${rank <= 3 ? 'top' : 'other'}">#${rank}</div>
+    <div class="card-body">
+      <div class="card-info">
+        <div class="card-addr">${addr(l)}</div>
+        <div class="card-meta">${l.city} · ${l.beds}bd/${l.baths}ba · ${l.sqft.toLocaleString()}sf</div>
+        <div class="card-metrics">
+          <div><div class="card-metric-label">Price</div><div class="card-metric-val" style="color:var(--text)">${fmt(l.price)}</div></div>
+          <div><div class="card-metric-label">IRR</div><div class="card-metric-val" style="color:${r.irr >= 0 ? 'var(--green)' : 'var(--red)'}">${fmtP(r.irr)}</div></div>
+          <div><div class="card-metric-label">Net</div><div class="card-metric-val" style="color:${r.propNetWealth >= 0 ? 'var(--green)' : 'var(--red)'}">${fmt(Math.abs(r.propNetWealth))}</div></div>
+        </div>
+      </div>
+      <div class="card-alpha" style="background:${ac}11">
+        <div style="font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Alpha</div>
+        <div class="card-alpha-score" style="color:${ac}">${a}</div>
+        <div class="card-alpha-label" style="color:${ac}">${a >= 70 ? '▲ BUY' : a >= 45 ? '● HOLD' : '▼ PASS'}</div>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="comp-btn ${isCmp ? 'active' : ''}" onclick="event.stopPropagation();toggleCompare('${l.id}')">${isCmp ? '✓ Comp' : '+ Comp'}</button>
+      ${l.daysOnZillow > 0 ? `<span class="card-tag">${l.daysOnZillow}d</span>` : ''}
+      <span class="card-tag">Risk: ${riskScore(l)}</span>
+    </div>
+  </div>`;
+}
+
+function detailHTML(l) {
+  const r = calcIRR(l, state), a = alphaScore(l, state), rs = riskScore(l);
+  // Risk radar per §4.2: Market, Price, Location, Liquidity, Climate (placeholder 72), Legal (placeholder 78)
+  const risks = [
+    ['Market',    Math.min(95, 60 + (l.daysOnZillow < 30 ? 20 : l.daysOnZillow < 90 ? 5 : -10))],
+    ['Price',     l.taxAssessed && l.taxAssessed > 0 ? Math.min(95, Math.round(80 * l.taxAssessed / l.price)) : 65],
+    ['Location',  Math.min(90, 65 + (l.lotSqft > 20000 ? 10 : 0))],
+    ['Liquidity', l.daysOnZillow < 30 ? 80 : l.daysOnZillow < 90 ? 65 : 45],
+    ['Climate',   72],
+    ['Legal',     78]
+  ];
+
+  // Opportunity Cost (§6): oppCost > 0 = leaving money on the table vs equities
+  const oppCostPositive = r.oppCost > 0;
+  const oppText = oppCostPositive
+    ? `Investing <b style="color:var(--cyan)">${fmtF(r.init)}</b> yields <b style="color:${r.propNetWealth >= 0 ? 'var(--green)' : 'var(--red)'}">${fmtF(r.propNetWealth)}</b> net over ${state.hold}yr. S&P 500 would yield <b style="color:var(--purple)">${fmtF(r.spGain)}</b>. <span style="color:var(--amber);font-weight:700">Leaving ${fmtF(r.oppCost)} on the table vs passive equities.</span>`
+    : `Investing <b style="color:var(--cyan)">${fmtF(r.init)}</b> yields <b style="color:var(--green)">${fmtF(r.propNetWealth)}</b> net over ${state.hold}yr, vs S&P 500's <b style="color:var(--purple)">${fmtF(r.spGain)}</b>. <span style="color:var(--green);font-weight:700">OUTPERFORMS equities by ${fmtF(-r.oppCost)} (${fmtP(r.alpha)}/yr).</span>`;
+
+  const renovParams = RENOV_PARAMS[state.renov] || RENOV_PARAMS.move_in;
+
+  return `<div class="detail-pad">
+    <div class="detail-title">${addr(l)}</div>
+    <div class="detail-sub">${l.address} · ${l.type === 'CONDO' ? 'Condo' : 'House'} · ${l.state || 'NY'}</div>
+    <div class="alpha-hero">
+      ${gaugeHTML(a, 120)}
+      <div style="flex:1">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">HomeAlpha™ Score</div>
+        <div class="metrics-grid">
+          <div><div class="metric-sm-label">True IRR</div><div class="metric-sm-val" style="color:${r.irr >= 0 ? 'var(--green)' : 'var(--red)'}">${fmtP(r.irr)}</div></div>
+          <div><div class="metric-sm-label">vs S&P 500</div><div class="metric-sm-val" style="color:${r.alpha >= 0 ? 'var(--cyan)' : 'var(--amber)'}">${fmtP(r.alpha)}</div></div>
+          <div><div class="metric-sm-label">Net (${state.hold}yr)</div><div class="metric-sm-val" style="color:var(--text)">${fmtF(r.propNetWealth)}</div></div>
+          <div><div class="metric-sm-label">Risk Score</div><div class="metric-sm-val" style="color:${rs >= 65 ? 'var(--green)' : 'var(--amber)'}">${rs}/100</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:14px">
+      <div class="chart-title">💰 Initial Capital Deployment (CF₀)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
+        <div style="text-align:center">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Down Payment</div>
+          <div style="font-size:14px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--text)">${fmtF(l.price * state.dp / 100)}</div>
+          <div style="font-size:8px;color:var(--text4)">${state.dp}% of price</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Closing Costs</div>
+          <div style="font-size:14px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--amber)">${fmtF(r.cc)}</div>
+          <div style="font-size:8px;color:var(--text4)">NY: α+β+flat+prepaids</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Renovation</div>
+          <div style="font-size:14px;font-weight:800;font-family:'JetBrains Mono',monospace;color:${r.renovCost > 0 ? 'var(--amber)' : 'var(--green)'}">${fmtF(r.renovCost)}</div>
+          <div style="font-size:8px;color:var(--text4)">${r.renovLabel}${renovParams.vacancy_mo > 0 ? ' · '+renovParams.vacancy_mo+'mo vac' : ''}</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:10px;color:var(--text2);font-weight:700">Total Initial Outlay</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:900;color:var(--cyan)">${fmtF(r.init)}</span>
+      </div>
+    </div>
+    <div class="stat-cards">
+      <div class="stat-card"><div class="stat-card-label">Payment/mo</div><div class="stat-card-val">${fmtF(r.mp)}</div><div class="stat-card-sub">${state.rate}% · 30yr fixed</div></div>
+      <div class="stat-card"><div class="stat-card-label">Rent/mo</div><div class="stat-card-val">${fmtF(r.rent)}</div><div class="stat-card-sub">${l.rentZestimate ? 'Zillow Zestimate' : 'Model estimate'}</div></div>
+      <div class="stat-card"><div class="stat-card-label">Yr1 Vacancy</div><div class="stat-card-val">${(r.vacancy * 100).toFixed(1)}%</div><div class="stat-card-sub">${renovParams.vacancy_mo > 0 ? 'Renov + base' : 'Base 5.5%'}</div></div>
+    </div>
+    <div class="chart-box"><div class="chart-title">Wealth: Home vs S&P 500</div><canvas id="wealthChart" height="170"></canvas></div>
+    <div class="chart-box"><div class="chart-title">Annual Cash Flow</div><canvas id="cashChart" height="150"></canvas></div>
+    <div class="chart-box">
+      <div class="chart-title">Risk Assessment Radar (§4.2)</div>
+      <div style="font-size:8px;color:var(--text4);margin-bottom:8px">Climate & Legal: placeholders — V2 integrates First Street Foundation + municipal regulatory DB</div>
+      ${risks.map(([f, v]) => {
+        const c = v >= 70 ? 'var(--green)' : v >= 50 ? 'var(--amber)' : 'var(--red)';
+        return `<div class="risk-bar"><div class="risk-bar-head"><span class="risk-bar-label">${f}</span><span class="risk-bar-val">${v}</span></div><div class="risk-bar-track"><div class="risk-bar-fill" style="width:${v}%;background:${c}"></div></div></div>`;
+      }).join('')}
+    </div>
+    <div class="opp-cost">
+      <div class="opp-cost-title">⚡ Opportunity Cost Analysis (§6)</div>
+      <div class="opp-cost-text">${oppText}</div>
+    </div>
+  </div>`;
+}
+
+function compareHTML() {
+  if (state.cmp.length < 2) return '<div class="empty-state"><div class="empty-icon">⚖️</div><div style="font-size:13px">Select 2+ properties to compare</div><div style="font-size:11px;margin-top:4px">Click "+ Comp" on any listing card</div></div>';
+  const rs = state.cmp.map(l => ({ l, r: calcIRR(l, state), a: alphaScore(l, state), risk: riskScore(l) }));
+  const best = rs.reduce((a, b) => a.r.irr > b.r.irr ? a : b);
+  const diff = Math.max(...rs.map(r => r.r.propNetWealth)) - Math.min(...rs.map(r => r.r.propNetWealth));
+  const rows = [['Price', r => fmtF(r.l.price)], ['Alpha', r => r.a], ['IRR', r => fmtP(r.r.irr)], ['Net Wealth', r => fmtF(r.r.propNetWealth)], ['vs S&P 500', r => fmtP(r.r.alpha)], ['Payment/mo', r => fmtF(r.r.mp)], ['Rent/mo', r => fmtF(r.r.rent)], ['$/sqft', r => '$' + (r.l.price / r.l.sqft).toFixed(0)], ['Opp Cost', r => fmtF(r.r.oppCost)], ['Risk', r => r.risk + '/100']];
+  return `<div class="detail-pad">
+    <div class="detail-title">Property Comparison</div>
+    <div class="chart-box" style="margin-top:14px"><div class="chart-title">IRR Comparison</div><canvas id="compChart" height="140"></canvas></div>
+    <table class="comp-table">
+      <thead><tr><th style="text-align:left">Metric</th>${rs.map(r => `<th style="color:${r === best ? 'var(--cyan)' : 'var(--text2)'}">${addr(r.l).substring(0, 16)}${r === best ? ' ★' : ''}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map(([lb, fn]) => `<tr><td>${lb}</td>${rs.map(r => `<td style="text-align:right;color:${r === best ? 'var(--cyan)' : 'var(--text)'};font-weight:${r === best ? 700 : 400}">${fn(r)}</td>`).join('')}</tr>`).join('')}</tbody>
+    </table>
+    <div class="wealth-gap">
+      <div style="font-size:9px;color:var(--amber);text-transform:uppercase;letter-spacing:2px;margin-bottom:3px">⚡ Wealth Gap</div>
+      <div class="mono" style="font-size:22px;font-weight:900;color:var(--amber)">${fmtF(diff)}</div>
+      <div style="font-size:10px;color:var(--text2);margin-top:3px">between best & worst over ${state.hold}yr</div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════ CHART RENDERING ═══════════════
+function destroyCharts() { Object.values(state.charts).forEach(c => c.destroy()); state.charts = {}; }
+
+function renderCharts(l) {
+  destroyCharts();
+  const r = calcIRR(l, state);
+  // Wealth chart
+  const labels = Array.from({ length: state.hold + 1 }, (_, i) => 'Y' + i);
+  // Wealth chart: cumulative sum of cash flows (from calcIRR) vs S&P FV growth
+  // Year 0 = initial outlay (negative), then cumulative builds up
+  const cumulativeCF = [];
+  let cumSum = 0;
+  for (let i = 0; i < r.cf.length; i++) {
+    cumSum += r.cf[i];
+    cumulativeCF.push(Math.round(cumSum));
+  }
+  const homeData = cumulativeCF;
+  // S&P: InitialInvestment × (1 + sp%)^t - InitialInvestment (net gain)
+  const spData = labels.map((_, i) => Math.round(r.init * Math.pow(1 + state.sp / 100, i) - r.init));
+  const ctx1 = document.getElementById('wealthChart')?.getContext('2d');
+  if (ctx1) {
+    state.charts.wealth = new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Home Net Return (cumulative)', data: homeData, borderColor: '#22d3ee', backgroundColor: 'rgba(34,211,238,0.1)', fill: true, tension: 0.3, borderWidth: 2, pointRadius: 3 },
+          { label: 'S&P 500 Net Gain', data: spData, borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,0.1)', fill: true, tension: 0.3, borderWidth: 2, pointRadius: 3 }
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 } } } }, scales: { x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: '#1a2540' } }, y: { ticks: { color: '#64748b', font: { size: 10 }, callback: v => fmt(v) }, grid: { color: '#1a2540' } } } }
+    });
+  }
+  // Cash flow chart
+  const cfLabels = Array.from({ length: state.hold }, (_, i) => 'Y' + (i + 1));
+  // Cash flow chart: vacancy-adjusted gross rent vs total expenses (OE + mortgage)
+  const income = cfLabels.map((_, i) => {
+    const vac = calcVacancy(state.renov, i + 1);
+    return Math.round(estRent(l) * 12 * Math.pow(1 + state.rg / 100, i) * (1 - vac));
+  });
+  const expenses = cfLabels.map((_, i) => {
+    const hv = l.price * Math.pow(1 + state.appr / 100, i + 1);
+    return -Math.round(hv * (state.ptax + state.ins + state.maint) / 100 + (l.hoaFee || 0) * 12 + r.mp * 12);
+  });
+  const ctx2 = document.getElementById('cashChart')?.getContext('2d');
+  if (ctx2) {
+    state.charts.cash = new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: cfLabels,
+        datasets: [
+          { label: 'Income', data: income, backgroundColor: '#10b981', borderRadius: 3 },
+          { label: 'Expenses', data: expenses, backgroundColor: '#ef4444', borderRadius: 3 }
+        ]
+      },
+      options: { responsive: true, plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 } } } }, scales: { x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: '#1a2540' } }, y: { ticks: { color: '#64748b', font: { size: 10 }, callback: v => fmt(v) }, grid: { color: '#1a2540' } } } }
+    });
+  }
+}
+
+function renderCompareChart() {
+  destroyCharts();
+  const rs = state.cmp.map(l => ({ l, irr: calcIRR(l, state).irr }));
+  const best = rs.reduce((a, b) => a.irr > b.irr ? a : b);
+  const ctx = document.getElementById('compChart')?.getContext('2d');
+  if (ctx) {
+    state.charts.comp = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: rs.map(r => addr(r.l).substring(0, 18)),
+        datasets: [{ label: 'IRR %', data: rs.map(r => Number(r.irr.toFixed(1))), backgroundColor: rs.map(r => r === best ? '#22d3ee' : '#334155'), borderRadius: 4 }]
+      },
+      options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#64748b', font: { size: 10 } }, grid: { color: '#1a2540' } }, y: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { display: false } } } }
+    });
+  }
+}
+
+// ═══════════════ ACTIONS ═══════════════
+function enterApp() {
+  document.getElementById('cover').style.display = 'none';
+  document.getElementById('app').classList.add('active');
+  render();
+}
+
+function setIntent(i) {
+  state.intent = i;
+  // Intent Engine (§5): each mode sets default Down Payment, Maintenance, Hold Period
+  if (i === 'live')  Object.assign(state, { dp: 20, maint: 1.5, hold: 7  }); // 7yr NAR median tenure
+  else if (i === 'hack')  Object.assign(state, { dp: 10, maint: 1.8, hold: 5  }); // house hack hybrid
+  else if (i === 'rent')  Object.assign(state, { dp: 25, maint: 2.0, hold: 10 }); // investment mode
+  else if (i === 'flip')  Object.assign(state, { dp: 30, maint: 3.0, hold: 2  }); // 18-24mo flip
+  render();
+}
+
+function setView(v) { state.view = v; render(); }
+
+function selectListing(id) {
+  state.sel = L.find(l => l.id === id);
+  state.view = 'detail';
+  render();
+}
+
+function toggleCompare(id) {
+  const l = L.find(l => l.id === id);
+  const idx = state.cmp.findIndex(c => c.id === id);
+  if (idx >= 0) state.cmp.splice(idx, 1);
+  else if (state.cmp.length < 5) state.cmp.push(l);
+  render();
+}
+
+function render() {
+  destroyCharts();
+  renderHeader();
+  renderMarketBar();
+  renderSidebar();
+  renderMain();
+}
+
+// Start
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = '#1a2540';
+</script>
+</body>
+</html>
